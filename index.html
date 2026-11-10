@@ -1,0 +1,1506 @@
+<!doctype html>
+<html lang="en" data-type="service" data-radius="soft" data-buttons="tonal">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="page-type" content="service">
+<meta name="site-kind" content="other">
+<meta name="description" content="Music producer offering production, mixing and mastering for artists and bands. Listen to recent tracks and get in touch.">
+<title>ProdbyTom</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rethink+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Tokens: black ground, white accents, greys for borders and shadows ── */
+:root{
+  --bg:#0a0a0a;          /* page ground */
+  --surface:#111111;     /* cards */
+  --surface-2:#171717;   /* raised controls */
+  --line:#262626;        /* hairlines and card borders */
+  --line-2:#3a3a3a;      /* hover borders */
+  --ink:#f5f5f5;         /* text and the one accent: white */
+  --muted:#a3a3a3;       /* labels, meta (8.4:1 on --bg) */
+  --dim:#5c5c5c;         /* idle waveform bars */
+  --shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 24px 48px -24px rgba(0,0,0,.9);
+  --shadow-hover:0 1px 0 rgba(255,255,255,.06) inset, 0 0 0 1px #3a3a3a, 0 28px 56px -24px rgba(255,255,255,.07);
+
+  --nav:72px; --padt:120px; --padb:72px; --gut:80px;
+  --r-sm:8px; --r-md:12px; --r-lg:20px; --r-btn:999px;
+
+  --t-h1:clamp(42px, 5.8vw, 88px);
+  --t-h2:clamp(30px, 2.6vw + 10px, 48px);
+  --t-h3:clamp(22px, .8vw + 16px, 28px);
+  --t-lead:20px; --t-body:16px; --t-small:14px; --t-label:13px;
+
+  --display:"Rethink Sans", system-ui, sans-serif;
+  --mono:"Rethink Sans", system-ui, sans-serif;
+}
+@media (max-width:1023px){ :root{ --gut:48px } }
+@media (max-width:639px){ :root{ --nav:56px; --padt:80px; --padb:48px; --gut:24px } }
+
+*{box-sizing:border-box}
+html,body{margin:0}
+html{scroll-padding-top:0; scroll-behavior:auto; background:var(--bg); color-scheme:dark}
+body{background:var(--bg); color:var(--ink); font:400 var(--t-body)/1.65 var(--display); -webkit-font-smoothing:antialiased}
+a{color:inherit}
+h1,h2,h3,p{margin:0}
+.wrap{width:min(100% - 2 * var(--gut), 1280px); margin-inline:auto; position:relative; z-index:1}
+.muted{color:var(--muted)}
+.label{font:500 var(--t-label)/1.2 var(--display); color:var(--muted)}
+.mono{font-family:var(--mono); font-variant-numeric:tabular-nums}
+.skip{position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap}
+.skip:focus{clip-path:none; width:auto; height:auto; padding:8px 16px; background:var(--ink); color:var(--bg); border-radius:var(--r-sm); z-index:20; top:16px}
+:focus-visible{outline:2px solid var(--ink); outline-offset:3px}
+
+/* ── Nav ── */
+.nav{position:fixed; inset:0 0 auto 0; height:var(--nav); background:var(--bg); border-bottom:1px solid var(--line); z-index:10}
+.nav .wrap{height:100%; display:flex; align-items:center; gap:32px}
+.brand{display:flex; align-items:center; gap:10px; text-decoration:none; font:500 20px/1 var(--display); letter-spacing:-.02em}
+.mark{width:22px; height:22px; display:grid; gap:3px; grid-template-rows:repeat(3,1fr)}
+.mark i{display:block; background:var(--ink); border-radius:2px}
+.mark i:nth-child(1){width:100%} .mark i:nth-child(2){width:70%} .mark i:nth-child(3){width:40%}
+.nav__links{display:flex; gap:28px; margin-left:auto; list-style:none; padding:0; margin-block:0}
+.nav__links a{font:500 15px/1 var(--display); color:var(--muted); text-decoration:none; white-space:nowrap; position:relative; transition:color .2s}
+.nav__links a::after{content:""; position:absolute; left:0; right:0; bottom:-6px; height:1px; background:var(--ink); transform:scaleX(0); transform-origin:left; transition:transform .25s ease}
+.nav__links a:hover{color:var(--ink)} .nav__links a:hover::after{transform:scaleX(1)}
+.nav .menu-btn{display:none}
+@media (max-width:1023px){
+  .nav__links{display:none}
+  .nav .menu-btn{display:inline-flex; margin-left:auto}
+  .nav .btn--primary{margin-left:0}
+}
+@media (max-width:639px){ .nav .btn--primary{display:none} }
+.sheet{position:fixed; inset:var(--nav) 0 0 0; background:var(--bg); z-index:9; padding:16px var(--gut); display:none}
+.sheet.open{display:block}
+.sheet a{display:flex; align-items:center; height:56px; border-bottom:1px solid var(--line); text-decoration:none; font:500 20px/1 var(--display)}
+
+/* Contact pop-up under the header button */
+.pop{position:fixed; top:var(--pop-top, calc(var(--nav) + 10px)); right:var(--pop-right, var(--gut)); z-index:20; width:min(340px, calc(100vw - 2 * var(--gut)));
+  background:var(--surface); border:1px solid var(--line-2); border-radius:var(--r-md); box-shadow:0 24px 48px -16px rgba(0,0,0,.8); padding:8px;
+  opacity:0; visibility:hidden; transform:translateY(-6px) scale(.98); transform-origin:top right; transition:opacity .2s ease, transform .2s ease, visibility 0s .2s}
+.pop.open{opacity:1; visibility:visible; transform:none; transition:opacity .2s ease, transform .2s ease}
+.pop__title{font:500 13px/1 var(--display); color:var(--muted); letter-spacing:.02em; padding:12px 12px 8px; margin:0}
+.pop__rule{border:0; height:1px; background:var(--line-2); margin:6px 12px}
+.pop__link{display:flex; align-items:center; gap:14px; padding:12px; border-radius:calc(var(--r-md) - 4px); text-decoration:none; color:var(--ink); transition:background .2s}
+.pop__link:hover{background:var(--surface-2)}
+.pop__link:focus-visible{outline:2px solid var(--ink); outline-offset:-2px}
+.pop__link span{display:flex; flex-direction:column; gap:4px; font:500 15px/1.2 var(--display); min-width:0; overflow-wrap:anywhere}
+.pop__link small{font:400 12px/1 var(--display); color:var(--muted)}
+.pop__icon{flex:none; width:20px; height:20px; fill:var(--muted); transition:fill .2s, stroke .2s}
+.pop__icon--line{fill:none; stroke:var(--muted); stroke-width:1.6; stroke-linejoin:round}
+.pop__link:hover .pop__icon{fill:var(--ink)} .pop__link:hover .pop__icon--line{fill:none; stroke:var(--ink)}
+@media (prefers-reduced-motion:reduce){ .pop{transition:none} }
+
+/* ── Buttons (one pair: filled white primary, grey tonal secondary) ── */
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:10px; height:44px; padding:0 24px; border-radius:var(--r-btn); font:500 16px/1 var(--display); text-decoration:none; border:1px solid transparent; cursor:pointer; transition:transform .18s ease, background .2s, border-color .2s, box-shadow .2s}
+.btn--primary{background:var(--ink); color:var(--bg)}
+.btn--primary:hover{transform:translateY(-1px); box-shadow:0 10px 24px -10px rgba(255,255,255,.35)}
+.btn--secondary{background:var(--surface-2); color:var(--ink); border-color:var(--line)}
+.btn--secondary:hover{transform:translateY(-1px); border-color:var(--line-2); background:#1d1d1d}
+.btn:active{transform:translateY(1px) scale(.98)}
+.btn svg{width:16px; height:16px; transition:transform .2s}
+.btn:hover svg{transform:translateX(2px)}
+.btn-row{display:flex; gap:12px; flex-wrap:wrap}
+@media (max-width:639px){ .btn-row .btn{flex:1 1 100%} }
+
+/* ── Sections: one or two screens each ── */
+main > section, footer.closing{min-height:calc(var(--h,1) * 100svh); padding:var(--padt) 0 var(--padb); position:relative}
+main > section:not(.hero){border-top:1px solid var(--line)}
+.head{display:grid; grid-template-columns:repeat(12,1fr); gap:24px; margin-bottom:48px; align-items:end}
+.head h2{grid-column:1 / span 7; font:400 var(--t-h2)/1.08 var(--display); letter-spacing:-.035em}
+.head p{grid-column:8 / span 5; color:var(--muted); max-width:46ch}
+@media (max-width:1023px){ .head{grid-template-columns:1fr} .head h2,.head p{grid-column:auto} }
+@media (max-width:639px){ .head{margin-bottom:28px; gap:12px} }
+/* phones: sections below the hero size to their content rather than a full screen (a short tab such as Sync media
+   otherwise left a big empty gap); the hero keeps its full-screen height and spacing */
+@media (max-width:639px){ main > section:not(.hero){min-height:0} }
+
+/* ── Hero ── */
+.hero{min-height:100svh; padding:calc(var(--nav) + 48px) 0 64px; display:flex}
+.hero .wrap{display:flex; flex-direction:column}
+.hero h1{font:400 var(--t-h1)/.98 var(--display); letter-spacing:-.045em; max-width:18ch}
+.hero h1 .muted{color:#7a7a7a}
+.sr-only{position:absolute; width:1px; height:1px; overflow:hidden; clip-path:inset(50%); white-space:nowrap}
+/* Rotating headline: each word slides up out of a clipped line while the next rises in */
+/* The line is clipped top and bottom only, and its width follows the active word so "by Tom" moves with it */
+.rotator{display:inline-grid; justify-items:start; vertical-align:top; clip-path:inset(-.08em -100vw -.2em -100vw)}
+.rotator__by{display:inline-block; white-space:nowrap; transition:transform .8s cubic-bezier(.22,.8,.2,1)}
+.rotator__word{grid-area:1 / 1; white-space:nowrap; transform:translateY(105%); opacity:0; filter:blur(6px);
+  transition:transform .8s cubic-bezier(.22,.8,.2,1), opacity .6s ease, filter .6s ease}
+.rotator__word.is-active{transform:none; opacity:1; filter:none}
+.rotator__word.is-leaving{transform:translateY(-105%); opacity:0; filter:blur(6px)}
+/* phones: "by Tom" always sits on its own second line, so the heading stays two lines whichever word is showing */
+@media (max-width:639px){ .rotator__by{display:block} section.hero h1{font-size:min(40px, calc((100vw - 2 * var(--gut)) / 7.6))} }   /* shrinks on very narrow phones so "Music production" still fits one line */
+@media (prefers-reduced-motion:reduce){ .rotator__word{transition:opacity .01s; transform:none; filter:none} .rotator__word.is-leaving{transform:none} .rotator__by{transition:none} }
+.hero__row{display:grid; grid-template-columns:repeat(12,1fr); gap:24px; margin-top:40px; align-items:start}
+.hero__lead{grid-column:1 / span 8; font-size:var(--t-lead); line-height:1.55; color:var(--muted); max-width:62ch; text-wrap:balance}
+@media (max-width:1279px){ .hero__lead{grid-column:1 / -1} }
+.hero__row .btn-row{grid-column:8 / span 5; justify-content:flex-end}
+.reel{margin-top:auto; padding-top:40px}
+.socials{grid-column:1 / span 5; grid-row:2; list-style:none; margin:0 0 0 -11px; padding:0; display:flex; gap:4px; flex-wrap:wrap}
+.socials a{width:44px; height:44px; display:grid; place-items:center; color:var(--muted); transition:transform .18s ease, color .2s}
+.socials a:hover{transform:translateY(-2px); color:var(--ink)}
+.socials a:active{transform:translateY(0) scale(.94)}
+.socials svg{width:22px; height:22px; fill:currentColor}
+@media (max-width:1023px){ .hero__row{grid-template-columns:1fr} .hero__lead,.hero__row .btn-row,.socials{grid-column:auto; grid-row:auto; justify-content:flex-start} }
+@media (max-width:639px){ .hero{padding:calc(var(--nav) + 32px) 0 24px} .hero h1{font-size:40px; min-height:calc(2 * .98em)} .hero__row{margin-top:20px; gap:16px} .reel{padding-top:24px} }
+
+/* ── Player (showreel + track rows) ── */
+.player{display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:20px; padding:16px 20px 16px 16px; background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--shadow); transition:border-color .2s, box-shadow .2s, transform .2s}
+.player:hover{border-color:var(--line-2)}
+.play{width:48px; height:48px; border-radius:50%; border:1px solid var(--line-2); background:var(--surface-2); color:var(--ink); display:grid; place-items:center; cursor:pointer; transition:transform .18s, background .2s, color .2s}
+.play:hover{transform:scale(1.06); background:var(--ink); color:var(--bg)}
+.play:active{transform:scale(.96)}
+.play svg{width:18px; height:18px}
+.play .i-pause{display:none}
+.is-playing .play{background:var(--ink); color:var(--bg)}
+.is-playing .play .i-play{display:none}
+.is-playing .play .i-pause{display:block}
+.wave{height:44px; display:flex; align-items:center; gap:3px; cursor:pointer; min-width:0; overflow:hidden}
+.wave i{flex:1 1 0; min-width:0; max-width:4px; border-radius:2px; background:var(--dim); transition:background .15s}
+.wave i.on{background:var(--ink)}
+.player:hover .wave i:not(.on){background:#6e6e6e}
+.time{font:400 var(--t-small)/1 var(--mono); color:var(--muted); white-space:nowrap}
+.reel .player{grid-template-columns:auto auto 1fr auto; padding:20px 24px 20px 20px}
+.reel__name{display:flex; flex-direction:column; gap:4px; min-width:150px}
+.reel__name b{font-weight:500; font-size:16px}
+@media (max-width:639px){
+  .reel .player{grid-template-columns:auto 1fr; row-gap:12px}
+  .reel .wave{grid-column:1 / -1; order:3}
+  .reel .time{grid-column:2; justify-self:end; order:2}
+  .wave{gap:2px}
+}
+
+/* ── Volume: a speaker button always sits in the header; hover or click it for a small
+      drop-down slider (icon, line, %). One level for everything, remembered. ── */
+/* the players' row gap would leave space under every card, so rows are spaced by margins instead */
+.player{row-gap:0}
+@media (max-width:1023px){ .track .wave{margin-top:20px} }   /* tablet: waveform drops to its own row */
+/* phones: the waveform becomes a plain seek bar: a grey line showing the whole song, white for the part played,
+   and a handle you can drag (or tap anywhere on the line) to skip forward or back. --f is set by paint().
+   Cards become two rows: the play button centred on the left, the title and time on top, the bar lined up under the title. */
+@media (max-width:639px){
+  .wave{position:relative; height:24px; overflow:visible; touch-action:pan-y; border-radius:2px;
+    background:linear-gradient(var(--ink), var(--ink)) left center / var(--f, 0%) 3px no-repeat,
+               linear-gradient(var(--line-2), var(--line-2)) center / 100% 3px no-repeat}
+  .wave i{display:none}
+  /* the handle shows on the song that's loaded (and while dragging), so a list of idle cards stays calm */
+  .wave::after{content:""; position:absolute; top:50%; left:var(--f, 0%); width:12px; height:12px; margin:-6px 0 0 -6px;
+    border-radius:50%; background:var(--ink); transform:scale(0); transition:transform .2s cubic-bezier(.22,.8,.2,1)}
+  .is-current .wave::after, .wave.is-dragging::after{transform:scale(1)}
+  .wave.is-dragging::after{transform:scale(1.35)}
+  .wave:focus-visible{outline:2px solid var(--ink); outline-offset:4px}
+
+  .player.track, .reel .player{grid-template-columns:44px minmax(0, 1fr) auto; grid-template-areas:"play title time" "play seek seek";
+    column-gap:16px; row-gap:6px; padding:16px 20px 12px 16px}
+  .player.track .play, .reel .player .play{grid-area:play; width:44px; height:44px}
+  .track .track__title, .reel .reel__name{grid-area:title; min-width:0; align-self:start}
+  .player.track .time, .reel .player .time{grid-area:time; align-self:start; justify-self:end; padding-top:5px; font-variant-numeric:tabular-nums}   /* level with the title's first line */
+  .player.track .wave, .reel .player .wave{grid-area:seek; order:0; margin-top:0}   /* beats the tablet rules further down */
+  .player.track .track__title b{font-size:17px; line-height:1.25}
+  .player.track .track__with{display:block; margin:2px 0 0}
+  .reel__name{min-width:0}
+  .reel__name b{font-size:17px; line-height:1.25}
+}
+.mute{all:unset; box-sizing:border-box; width:32px; height:32px; flex:none; display:grid; place-items:center; color:var(--muted); cursor:pointer; border-radius:50%; transition:color .2s}
+.mute:hover{color:var(--ink)}
+.mute:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+.mute svg{width:20px; height:20px}
+.mute .i-muted, .vol-muted .mute .i-vol{display:none}
+.vol-muted .mute .i-muted{display:block}
+.nvol{position:relative}   /* the header's own 32px gap on both sides, like every other header item */
+.nvol__btn{width:44px; height:44px; padding:0; border-radius:50%; border:1px solid var(--line); background:var(--surface-2); color:var(--ink); display:grid; place-items:center; cursor:pointer;
+  transition:transform .18s, border-color .2s, background .2s}
+.nvol__btn:hover, .nvol.is-open .nvol__btn{border-color:var(--line-2); background:#1d1d1d}
+.nvol__btn:active{transform:scale(.94)}
+.nvol__btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+.nvol__btn svg{width:20px; height:20px}
+.nvol__btn .i-muted, .vol-muted .nvol__btn .i-vol{display:none}
+.vol-muted .nvol__btn .i-muted{display:block}
+/* the drop-down: hangs just under the header, right edge lined up with the button */
+.vol{position:absolute; right:0; top:calc(100% + (var(--nav) - 44px) / 2 + 10px); display:flex; align-items:center; gap:14px; padding:14px 20px 14px 14px;
+  background:var(--surface); border:1px solid var(--line-2); border-radius:var(--r-md);
+  opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .2s ease, transform .2s ease, visibility 0s .2s}
+/* invisible bridge over the gap so the pointer can travel from the button to the drop-down */
+.vol::before{content:""; position:absolute; left:0; right:0; bottom:100%; height:calc((var(--nav) - 44px) / 2 + 12px)}
+.is-open > .vol, .mvol.is-open .vol{opacity:1; visibility:visible; transform:none; transition:opacity .2s ease, transform .2s ease}
+.vol__pct{min-width:4.5ch; font:400 14px/1 var(--display); color:var(--muted); font-variant-numeric:tabular-nums; white-space:nowrap}
+.vol__line{position:relative; width:180px; height:20px; cursor:pointer; touch-action:none; --f:100%}
+.vol__line::before, .vol__line::after{content:""; position:absolute; left:0; top:50%; height:3px; margin-top:-1.5px; border-radius:2px}
+.vol__line::before{right:0; background:var(--line-2)}
+.vol__line::after{width:var(--f); background:var(--ink)}
+.vol__line i{position:absolute; top:50%; left:var(--f); width:12px; height:12px; margin:-6px 0 0 -6px; border-radius:50%; background:var(--ink); transition:transform .15s}
+.vol__line:hover i, .vol__line.is-drag i{transform:scale(1.15)}
+.vol__line:focus-visible{outline:2px solid var(--ink); outline-offset:3px; border-radius:2px}
+.vol-muted .vol__line::after, .vol-muted .vol__line i{background:#6e6e6e}
+/* floating player: its speaker opens the same slider, rising above the card (right edges lined up) */
+.mvol{margin-right:-12px}
+.mvol__btn{all:unset; box-sizing:border-box; width:40px; height:40px; display:grid; place-items:center; color:var(--muted); cursor:pointer; border-radius:50%; transition:color .2s}
+.mvol__btn:hover, .mvol.is-open .mvol__btn{color:var(--ink)}
+.mvol__btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+.mvol__btn svg{width:20px; height:20px}
+.mvol__btn .i-muted, .vol-muted .mvol__btn .i-vol{display:none}
+.vol-muted .mvol__btn .i-muted{display:block}
+.mini .vol{top:auto; bottom:calc(100% + 10px); right:-1px; transform:translateY(6px)}
+.mini .vol::before{top:100%; bottom:auto; height:12px}
+/* every waveform shrinks with the volume; muted, the bars flatten into a thin line */
+/* --vs (0-1) is set on each waveform by the volume code; --m is the bar's own floor, worked out so it never gets
+   thinner than a 3px line. One continuous scale: no jump between "quiet" and "muted", which simply sends --vs to 0. */
+.wave i{transform:scaleY(max(var(--m, 0), var(--vs, 1))); transition:background .15s, transform .3s cubic-bezier(.22,.8,.2,1)}
+/* phones and touch screens: no slider; the floating card's speaker is a plain mute button there */
+/* first-play hint: a small note under the speaker button, pointing up at it (shown once per visitor) */
+.vhint{position:absolute; top:calc(100% + 11px); z-index:2; width:max-content; max-width:260px; display:flex; align-items:flex-start; gap:12px;
+  padding:14px 10px 14px 16px; background:var(--surface); border:1px solid var(--line-2); border-radius:var(--r-md);
+  opacity:0; visibility:hidden; transform:translateY(-6px); transition:opacity .25s ease, transform .25s ease, visibility 0s .25s}
+.vhint.is-on{opacity:1; visibility:visible; transform:none; transition:opacity .25s ease, transform .25s ease}
+/* the arrow: a rotated square sharing the card's border, centred under the speaker */
+.vhint::before{content:""; position:absolute; top:-6px; right:var(--arrow, 16px); width:10px; height:10px; background:var(--surface);
+  border:1px solid var(--line-2); border-width:1px 0 0 1px; transform:rotate(45deg)}
+.vhint p{margin:0; font:400 14px/1.4 var(--display); color:var(--muted)}
+.vhint p b{display:block; margin-bottom:2px; font-weight:500; color:var(--ink)}
+.vhint__x{all:unset; flex:none; width:28px; height:28px; margin:-6px 0 0; display:grid; place-items:center; color:var(--muted); cursor:pointer; border-radius:50%; transition:color .2s}
+.vhint__x:hover{color:var(--ink)}
+.vhint__x:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+.vhint__x svg{width:16px; height:16px}
+/* a soft ring on the speaker while the hint is up */
+.nvol.is-hinted .nvol__btn{animation:vhint-ring 1.6s ease-out 3}
+@keyframes vhint-ring{0%{box-shadow:0 0 0 0 rgba(255,255,255,.35)} 100%{box-shadow:0 0 0 12px rgba(255,255,255,0)}}
+@media (max-width:639px), (pointer:coarse){ .nvol, .vhint, .mini .vol{display:none !important} }
+@media (prefers-reduced-motion:reduce){ .vol, .vhint{transition:none} .nvol.is-hinted .nvol__btn{animation:none} .wave i{transition:background .15s} }
+
+/* ── Work tabs: Recent tracks / Sync media ── */
+.head--tabs{display:block}
+.tabs{display:flex; flex-wrap:wrap; gap:8px 40px}
+.tab{appearance:none; background:none; border:0; padding:0 0 10px; margin:0; cursor:pointer; position:relative;
+  font:400 var(--t-h2)/1.08 var(--display); letter-spacing:-.035em; color:#6e6e6e; transition:color .25s}   /* inactive tab: dim but still 3.6:1 on the background */
+.tab::after{content:""; position:absolute; left:0; right:0; bottom:0; height:2px; background:var(--ink); transform:scaleX(0); transform-origin:left; transition:transform .35s cubic-bezier(.22,.8,.2,1)}
+.tab:hover{color:#8a8a8a}
+.tab[aria-selected="true"]{color:var(--ink)}
+.tab[aria-selected="true"]::after{transform:scaleX(1)}
+.panel{animation:panel-in .45s cubic-bezier(.22,.8,.2,1)}
+.panel[hidden]{display:none}
+@keyframes panel-in{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+
+/* ── Sync media videos ── */
+.vcar{display:grid; grid-template-columns:repeat(12, minmax(0,1fr)); gap:24px; align-items:start}
+/* side chevrons: hidden on phones (swipe and the arrows underneath do the job there) */
+.vchev{display:none}
+@media (min-width:640px){
+  /* the video sits in from the container; the numbered titles run underneath it, with a chevron either side of them */
+  .vcar{container-type:inline-size; grid-template-columns:56px minmax(0, 1fr) 56px; column-gap:16px}
+  .vcar > .vtrack, .vcar > .vside{grid-column:2}
+  .vchev{grid-row:2; align-self:end; height:30px;   /* centred on the titles' text line */ display:grid; place-items:center; padding:0; border:0; background:none;
+    color:var(--muted); cursor:pointer; transition:color .2s, opacity .2s}
+  .vchev--prev{grid-column:1} .vchev--next{grid-column:3}
+  .vchev svg{width:28px; height:28px; transition:transform .18s}
+  .vchev:hover{color:var(--ink)}
+  .vchev--prev:hover svg{transform:translateX(-3px)} .vchev--next:hover svg{transform:translateX(3px)}
+  .vchev:active svg{transform:scale(.92)}
+  .vchev:disabled{opacity:.25; cursor:default; color:var(--muted)}
+  .vchev:disabled svg{transform:none}
+  .vchev:focus-visible{outline:2px solid var(--ink); outline-offset:-4px; border-radius:8px}
+  .vside .vnav{display:none}         /* the chevrons either side of the list replace the small arrows */
+  .vside .vlist{display:grid}        /* the numbered titles show on tablets too */
+}
+.vtrack{grid-column:1 / -1; list-style:none; margin:0; padding:0; display:flex; overflow-x:auto; scroll-snap-type:x mandatory; scroll-behavior:smooth; scrollbar-width:none; overscroll-behavior-x:contain}
+.vtrack::-webkit-scrollbar{display:none}
+.vtrack:focus-visible{outline-offset:6px}
+.vslide{flex:0 0 100%; scroll-snap-align:start; scroll-snap-stop:always}
+/* the video spans the full width; underneath, the numbered list runs across in three columns with the arrows at the end */
+.vside{grid-column:1 / -1; display:flex; align-items:flex-start; gap:40px; margin-top:2px}
+.vside .vnav{order:2; flex:none; margin-top:2px}
+.vnav{display:flex; align-items:center; gap:16px}
+.vnav__btn{width:44px; height:44px; padding:0; border:0; background:none; color:var(--muted); display:grid; place-items:center; cursor:pointer; transition:color .2s, transform .18s, opacity .2s}
+.vnav__btn:hover{color:var(--ink)}
+.vnav__btn[data-dir="-1"]:hover{transform:translateX(-2px)} .vnav__btn[data-dir="1"]:hover{transform:translateX(2px)}
+.vnav__btn:active{transform:scale(.92)}
+.vnav__btn:disabled{opacity:.3; cursor:default; color:var(--muted); transform:none}
+.vnav__btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px; border-radius:6px}
+.vnav__btn svg{width:26px; height:26px}
+.vnav__count{display:none; font-size:var(--t-small); color:var(--muted)}   /* the "1 / 3" counter is switched off */ .vnav__count b{color:var(--ink); font-weight:500}
+.vlist{list-style:none; margin:0; padding:0; flex:1; min-width:0; display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:24px}
+.vlist__item{all:unset; box-sizing:border-box; width:100%; display:flex; gap:12px; align-items:center; padding:16px 0 4px; border-top:2px solid var(--line); cursor:pointer; color:var(--muted); font:500 16px/1.3 var(--display); transition:color .2s, border-color .25s}
+.vlist__item:hover{color:var(--ink)}
+.vlist__item:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+.vlist__item.is-active{color:var(--ink); border-top-color:var(--ink)}
+.vlist__n{font:400 var(--t-label)/1 var(--mono); color:var(--dim); width:12px; flex:none}
+.vlist__item.is-active .vlist__n{color:var(--ink)}
+.video__frame{position:relative; aspect-ratio:16 / 9; background:var(--surface); border:1px solid var(--line); overflow:hidden}
+.video__frame video{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; background:#000; display:block}
+.video__play{position:absolute; left:50%; top:50%; width:56px; height:56px; margin:-28px 0 0 -28px; border-radius:50%; border:1px solid var(--line-2); background:rgba(17,17,17,.85); color:var(--ink); display:grid; place-items:center; cursor:pointer; transition:transform .18s, background .2s, color .2s}
+.video__play:hover{transform:scale(1.06); background:var(--ink); color:var(--bg)}
+.video__play svg{width:20px; height:20px}
+.video__note{position:absolute; left:12px; bottom:10px; font:400 var(--t-label)/1.2 var(--mono); color:var(--dim)}
+.video.is-playing .video__play, .video.is-playing .video__note{display:none}
+.video.is-missing .video__note{color:var(--muted)}
+.video.is-fallback .video__play, .video.is-fallback .video__note{display:none}
+.video__yt{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%)}
+.video__yt:hover{transform:translate(-50%,calc(-50% - 1px))}
+.video__yt:active{transform:translate(-50%,-50%) scale(.98)}
+.video__meta{padding-top:30px}   /* with .vside's 2px + the 24px row gap below, the title sits centred between video and list */
+/* desktop: the numbered list under the video carries the titles, so the caption under each video is dropped
+   (tablets and phones hide that list, so they keep the caption) */
+@media (min-width:640px){ .vslide .video__meta{display:none} }
+.video__meta b{display:block; font:500 16px/1.3 var(--display)}
+.video__meta span{font-size:var(--t-small); color:var(--muted)}
+@media (max-width:1023px){ .vtrack,.vside{grid-column:1 / -1} .vlist{display:none} .vnav{justify-content:space-between} .vside .vnav{flex:1} }
+@media (max-width:639px){ .tabs{gap:8px 20px; flex-wrap:nowrap} .tab{font-size:24px} }
+@media (prefers-reduced-motion:reduce){ .panel{animation:none} }
+
+/* ── Tracks ── */
+.tracks{list-style:none; margin:0; padding:0; display:grid; gap:12px}
+.track{grid-template-columns:auto minmax(200px, 3fr) minmax(0, 5fr) auto auto}
+.track__num{display:none}
+.track__title b{display:block; font:500 18px/1.3 var(--display)}
+.track__with{font-size:14px; font-weight:400; color:var(--muted); margin-left:4px; white-space:nowrap}
+.tags{display:flex; gap:8px}
+.tag{font:500 var(--t-label)/1 var(--display); color:var(--muted); border:1px solid var(--line); border-radius:999px; padding:7px 12px; white-space:nowrap}
+@media (max-width:1023px){
+  .track{grid-template-columns:auto 1fr auto}
+  .track .wave{grid-column:1 / -1; order:3}
+  .track .tags{display:none}
+}
+
+/* ── Cards (services, steps, testimonials share one recipe) ── */
+.grid{display:grid; grid-template-columns:repeat(12,1fr); gap:24px}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r-lg); padding:32px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:16px; transition:transform .2s ease, border-color .2s, box-shadow .2s}
+.card:hover{transform:translateY(-2px); border-color:var(--line-2); box-shadow:var(--shadow-hover)}
+.card h3{font:500 var(--t-h3)/1.2 var(--display); letter-spacing:-.02em}
+.card p{color:var(--muted)}
+.span-3{grid-column:span 3} .span-4{grid-column:span 4} .span-6{grid-column:span 6}
+.icon{width:44px; height:44px; border-radius:var(--r-md); border:1px solid var(--line); background:var(--surface-2); display:grid; place-items:center}
+.icon svg{width:22px; height:22px; stroke:var(--ink); fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round}
+.ticks{list-style:none; padding:16px 0 0; margin:auto 0 0; border-top:1px solid var(--line); display:grid; gap:8px; font-size:var(--t-small); color:var(--muted)}
+.ticks li::before{content:"—"; margin-right:8px; color:var(--dim)}
+.services .card{min-height:400px}
+@media (max-width:1279px){ .span-3{grid-column:span 6} .services .card{min-height:0} }
+@media (max-width:1023px){ .span-4{grid-column:span 12} }
+@media (max-width:639px){ .grid{gap:12px} .span-3,.span-6{grid-column:span 12} .card{padding:24px} }
+
+/* ── Process ── */
+.step{min-height:300px}
+.step__n{font:400 56px/1 var(--display); letter-spacing:-.04em; color:#4a4a4a}
+.formats{margin-top:48px; border-top:1px solid var(--line)}
+.formats div{display:grid; grid-template-columns:repeat(12,1fr); gap:24px; padding:20px 0; border-bottom:1px solid var(--line)}
+.formats dt{grid-column:span 4; font-weight:500}
+.formats dd{grid-column:span 8; margin:0; color:var(--muted)}
+@media (max-width:1279px){ .step{min-height:0} }
+@media (max-width:639px){ .formats div{grid-template-columns:1fr; gap:4px} .formats dt,.formats dd{grid-column:auto} }
+
+/* ── About ── */
+main > section.about, main > section.achievements, main > section.testimonials{min-height:0; padding-bottom:var(--padt)}
+main > section.about{padding-bottom:120px}
+main > section.achievements{padding-top:80px}
+@media (max-width:639px){ main > section.about{padding-bottom:72px} main > section.achievements{padding-top:56px} }
+.about__grid{display:grid; grid-template-columns:repeat(12,1fr); gap:24px; align-items:end}   /* text column ends level with the photo, so Read more's panel opens right under the button */
+.about__text{grid-column:1 / span 6; display:flex; flex-direction:column; gap:20px}
+.about__text h2{font:400 var(--t-h2)/1.08 var(--display); letter-spacing:-.035em; margin-bottom:28px}
+.about__text p{font-size:var(--t-lead); line-height:1.6; color:var(--muted); max-width:52ch}
+.about__photo{grid-column:8 / span 5; aspect-ratio:1125 / 1173; overflow:hidden; border:1px solid var(--line); border-radius:0; box-shadow:var(--shadow); background:var(--surface); max-height:calc(100svh - var(--padt) - var(--padb))}
+.about__photo img{display:block; width:100%; height:100%; object-fit:cover; object-position:center 19.35%; filter:grayscale(1) contrast(1.05)}
+/* "Proficient in" row (Read more sits under it): software icons with their names */
+.tools{display:flex; flex-wrap:wrap; align-items:center; gap:12px 24px; margin-top:4px}
+.tools__label{font-size:var(--t-small); color:var(--muted); min-width:88px}   /* same width for both labels, so the two rows of icons start in line */
+.tools__list{list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:12px 20px}
+.tools__list li{display:flex; align-items:center; gap:10px; font:500 15px/1.2 var(--display); color:var(--ink)}
+.tools__list img{display:block; width:32px; height:32px; flex:none}
+@media (max-width:639px){ .tools{display:grid; gap:12px} .tools__list{display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:12px} .tools__list li{flex-direction:column; align-items:flex-start; gap:8px; font-size:14px} }   /* phones: three even columns, icon above name */
+@media (max-width:1023px){ .about__text,.about__photo{grid-column:1 / -1} .about__photo{max-width:480px; max-height:none} }
+/* phones and tablets (where the photo stacks under the text): "Proficient in" and "Read more" move under the photo,
+   so the button sits right above the text it opens. The text column dissolves into the grid (display:contents) so they
+   can be ordered after the photo; spacing matches the column's own 20px rhythm. */
+@media (max-width:1023px){
+  .about__grid{row-gap:20px}
+  .about__text{display:contents}
+  .about__text > *{grid-column:1 / -1}
+  .about__photo{order:1; margin-top:12px}
+  .about__text .tools{order:2}
+  .about__text .more__btn{order:3; justify-self:start; margin-top:4px}
+}
+
+/* Read more: a quiet link under the About text; the longer bio opens below the section */
+.more__btn{align-self:flex-start; display:inline-flex; align-items:center; gap:6px; margin-top:4px; padding:4px 0; background:none; border:0; position:relative;
+  color:var(--muted); font:500 16px/1 var(--display); cursor:pointer; transition:color .2s}
+.more__btn::after{content:""; position:absolute; left:0; right:22px; bottom:-2px; height:1px; background:currentColor; transform:scaleX(0); transform-origin:left; transition:transform .25s ease}
+.more__btn:hover{color:var(--ink)} .more__btn:hover::after{transform:scaleX(1)}
+.more__btn:active{transform:translateY(1px)}
+.more__btn:focus-visible{outline:2px solid var(--ink); outline-offset:4px; border-radius:2px}
+.more__arrow{display:grid; place-items:center; transition:transform .2s}
+.more__arrow svg{width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; transition:transform .45s cubic-bezier(.22,.8,.2,1)}
+.more__btn:hover .more__arrow{transform:translateY(2px)}
+.more__btn[aria-expanded="true"] .more__arrow svg{transform:rotate(180deg)}
+.more__body{display:grid; grid-template-rows:0fr; width:100%; transition:grid-template-rows .6s cubic-bezier(.22,.8,.2,1)}
+.more__body.open{grid-template-rows:1fr}
+.more__clip{overflow:hidden; min-height:0}
+.more__inner{padding-top:64px; opacity:0; transition:opacity .4s ease}
+.more__body.open .more__inner{opacity:1; transition-delay:.15s}
+.more__grid{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:40px 24px}
+.more__item{border-top:1px solid var(--line); padding-top:20px}
+.more__item h3{font:500 var(--t-h3)/1.2 var(--display); letter-spacing:-.02em; margin:0 0 12px}
+.more__item p{font-size:17px; line-height:1.6; color:var(--muted); max-width:56ch; margin:0}
+@media (max-width:639px){ .more__inner{padding-top:40px} .more__grid{grid-template-columns:1fr; gap:28px} }
+@media (prefers-reduced-motion:reduce){ .more__body,.more__inner,.more__arrow svg{transition:none} }
+
+/* ── Achievements: 3 x 2 stat boxes, each with its platform's logo faded behind the figure ── */
+.achievements .head{display:block}
+.stats{list-style:none; padding:0; margin:0; display:grid; grid-template-columns:repeat(3, minmax(0, 1fr)); gap:16px}
+.stat{position:relative; overflow:hidden; isolation:isolate; min-height:210px; padding:28px; display:flex; flex-direction:column; justify-content:center; gap:10px;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--r-md); box-shadow:var(--shadow)}
+.stat__logo{position:absolute; z-index:-1; top:50%; right:32px; height:44%; width:auto; aspect-ratio:1; transform:translateY(-50%); fill:#1a1a1a; transition:fill .3s ease}
+.stat:hover .stat__logo{fill:var(--ink)}
+.stat__link{position:absolute; inset:0; z-index:1; border-radius:inherit}
+.stat__link:focus-visible{outline:2px solid var(--ink); outline-offset:-2px}
+.stat:has(.stat__link):focus-within .stat__logo{fill:var(--ink)}
+.stat__num{font:400 clamp(36px, 3.6vw, 56px)/1 var(--display); letter-spacing:-.04em; color:var(--ink); white-space:nowrap}
+.stat__num small{font-size:.5em; letter-spacing:-.02em}
+.stat__label{font-size:18px; line-height:1.4; color:var(--muted)}
+@media (max-width:1023px){ .stats{grid-template-columns:repeat(2, minmax(0, 1fr))} .stat{min-height:180px} .stat__logo{right:32px; height:40%} }
+@media (max-width:639px){ .stats{grid-template-columns:1fr; grid-auto-rows:1fr; gap:12px} .stat{min-height:120px; padding:20px 80px 20px 24px} .stat__num{font-size:28px} .stat__logo{right:20px; height:36%} }
+
+/* ── Testimonials (layout after the reference: eyebrow, heading, three bordered cards) ── */
+.testimonials .head{display:block}
+.testimonials .eyebrow{margin-bottom:12px}
+/* Four testimonials of the same kind, so one even 2 x 2 grid. Each card reads stars -> quote -> who said it:
+   the quote leads, and the name sits at the foot under a hairline, so shorter quotes never leave a hole mid-card. */
+.quotes{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:16px}
+.quote:hover{transform:none; border-color:var(--line); box-shadow:var(--shadow)}
+.quote{margin:0; padding:32px; gap:20px; border-radius:4px}
+.quote__who{margin-top:auto; padding-top:20px; border-top:1px solid var(--line)}
+.quote__who b{display:block; font:500 16px/1.3 var(--display)}
+.quote__who span{display:block; margin-top:2px; font-size:var(--t-label); color:var(--muted)}
+.stars{display:flex; gap:4px}
+.stars svg{width:16px; height:16px; fill:var(--ink)}
+.quote blockquote{margin:0 0 8px; font:400 17px/1.6 var(--display); letter-spacing:-.005em; color:var(--ink); font-style:italic; max-width:40em}
+@media (max-width:1023px){
+  .quote{padding:28px}
+  .quote blockquote{font-size:16px}
+}
+@media (max-width:639px){
+  .quotes{grid-template-columns:1fr; gap:12px}
+  .quote{padding:24px; gap:16px}
+  .quote blockquote{font-size:15px}
+  .quote__who{padding-top:16px}
+}
+
+/* ── Floating mini player: appears bottom right once the playing item's own controls are off screen ── */
+.mini{position:fixed; right:32px; bottom:32px; z-index:15; width:min(460px, calc(100vw - 24px)); display:grid; grid-template-columns:auto minmax(0, 1fr) auto auto; align-items:center; column-gap:16px; row-gap:14px;
+  padding:18px 16px 16px 18px; background:var(--surface); border:1px solid var(--line-2); border-radius:var(--r-md); box-shadow:0 24px 48px -16px rgba(0,0,0,.8);
+  opacity:0; transform:translateY(16px); pointer-events:none; transition:opacity .25s ease, transform .25s ease}
+.mini.is-on{opacity:1; transform:none; pointer-events:auto}
+/* play button uses the site's standard .play size (48px) */
+.mini__title{all:unset; box-sizing:border-box; min-width:0; cursor:pointer; display:flex; flex-direction:column; gap:4px}
+.mini__title small{font:400 14px/1.2 var(--display); color:var(--muted)}
+.mini__title b{font:500 18px/1.3 var(--display); color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.mini__title:hover b{text-decoration:underline; text-underline-offset:3px}
+.mini__title:focus-visible, .mini__close:focus-visible{outline:2px solid var(--ink); outline-offset:2px; border-radius:4px}
+.mini__close{all:unset; width:40px; height:40px; display:grid; place-items:center; color:var(--muted); cursor:pointer; transition:color .2s}
+.mini__close:hover{color:var(--ink)}
+.mini__close svg{width:22px; height:22px}
+/* seek row: time · scrubber · length */
+.mini__seek{grid-column:1 / -1; display:grid; grid-template-columns:auto minmax(0, 1fr) auto; align-items:center; gap:12px; font:400 13px/1 var(--display); color:var(--muted); font-variant-numeric:tabular-nums}
+.mini__track{position:relative; height:20px; cursor:pointer; touch-action:none; --f:0%}
+.mini__track::before, .mini__track::after{content:""; position:absolute; left:0; top:50%; height:4px; margin-top:-2px; border-radius:2px}
+.mini__track::before{right:0; background:var(--line)}
+.mini__track::after{width:var(--f); background:var(--ink)}
+.mini__track i{position:absolute; top:50%; left:var(--f); width:14px; height:14px; margin:-7px 0 0 -7px; border-radius:50%; background:var(--ink); transform:scale(.7); transition:transform .15s}
+.mini__track:hover i, .mini__track.is-drag i, .mini__track:focus-visible i{transform:scale(1)}
+.mini__track:focus-visible{outline:2px solid var(--ink); outline-offset:4px; border-radius:4px}
+@media (max-width:639px){ .mini{right:12px; bottom:12px; column-gap:12px; row-gap:10px; padding:14px 10px 12px 14px} .mini__title b{font-size:16px} .mini__title small{font-size:13px} }
+@media (prefers-reduced-motion:reduce){ .mini{transition:none} }
+
+/* ── Closing + footer ── */
+footer.closing{display:flex; border-top:1px solid var(--line)}
+main ~ footer.closing{min-height:0; padding:48px 0 32px}
+footer.closing .directory{border-top:0; padding-top:0}
+footer.closing > .wrap{display:flex; flex-direction:column; justify-content:space-between; gap:64px}
+.close{display:grid; grid-template-columns:repeat(12,1fr); gap:24px; align-items:end}
+.close h2{grid-column:1 / span 8; font:400 clamp(44px, 6vw, 96px)/1 var(--display); letter-spacing:-.045em}
+.close p{grid-column:1 / span 6; color:var(--muted); font-size:var(--t-lead); margin-top:-8px}
+.close .btn-row{grid-column:9 / span 4; justify-content:flex-end; grid-row:1}
+.btn--xl{height:56px; padding:0 32px; font-size:18px}
+.directory{border-top:1px solid var(--line); padding-top:32px; display:grid; grid-template-columns:repeat(12,1fr); gap:24px}
+.directory .brand{grid-column:1 / span 4}
+/* footer brand: the spinning red globe beside the PRODBYTOM lettering.
+   The globe's viewBox is cropped to the outside of its ring, so its box is exactly the circle (30px).
+   In logo.svg the P runs from y 1.9 to 40.7 of 42, so the image is scaled to make those 38.8 units 30px
+   and pulled up by 1.9 units, putting the P's top and bottom on the globe's top and bottom. */
+.brand--foot{--gh:30px; gap:14px; width:max-content; align-items:flex-start}
+.brand--foot .fglobe{display:block; width:var(--gh); height:var(--gh); flex:none}
+.brand--foot img{display:block; height:calc(var(--gh) * 42 / 38.8); width:auto; margin-top:calc(var(--gh) * -1.9 / 38.8)}
+@media (max-width:639px){ .brand--foot{--gh:22px} }   /* 30px would make the lettering ~360px wide, too wide for a phone */
+/* header logo: the traced PRODBYTOM lettering */
+.brand--logo img{display:block; height:18px; width:auto}
+@media (max-width:639px){ .brand--logo img{height:15px} }
+.directory nav{grid-column:5 / span 8; display:flex; gap:28px; justify-content:flex-end; flex-wrap:wrap}
+.directory nav a{color:var(--muted); text-decoration:none; font-weight:500; transition:color .2s}
+.directory nav a:hover{color:var(--ink)}
+.legal{grid-column:1 / -1; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; font-size:var(--t-label); color:var(--muted); padding-top:16px; border-top:1px solid var(--line)}
+@media (max-width:1023px){
+  .close h2,.close p,.close .btn-row{grid-column:1 / -1; grid-row:auto; justify-content:flex-start}
+  .close p{margin-top:0}
+  .directory .brand,.directory nav{grid-column:1 / -1; justify-content:flex-start}
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion:reduce){ *,*::before,*::after{transition:none !important; animation:none !important} }
+/* Numbers keep even widths so times and counters do not jitter */
+.time,.vlist__n,.video__note,.vnav__count{font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body id="top">
+<!--
+  tasteskill 2.5 · kind: service (music producer) · page type service, site-kind other
+  Deal (by random draw; Node is not installed so start.mjs / deal.mjs could not run):
+    pairing rethink (Rethink Sans) · hero editorial → statement (no photographs: user asked for no images)
+    nav nav-mega → nav-split (one page, five anchors, no link columns to fill a panel)
+    close close-photo → close-word head row (no photographs) · buttons tonal · mark stack
+  Palette: the client's own direction — black ground, white accent, greys for borders and shadows.
+
+  Plan (1440x900):
+    hero          1 screen  h1 + lead + two actions + showreel player
+    #tracks       1 screen  six playable tracks (MP3 placeholders in /audio)
+    #testimonials 1 screen  "My testimonials", four quote cards in a 2 x 2 grid
+    #contact      1 screen  close + directory + legal row
+
+  AUDIO PLACEHOLDERS — drop your files into ./audio with these names, or edit data-src below:
+    audio/showreel.mp3, audio/track-01.mp3 … audio/track-06.mp3
+-->
+
+<header class="nav">
+  <div class="wrap">
+    <a class="skip" href="#tracks">Skip to tracks</a>
+    <a class="brand brand--logo" href="#top" aria-label="ProdbyTom, home">
+      <img src="logo.svg" alt="" width="464" height="42">
+    </a>
+    <ul class="nav__links">
+      <li><a href="#tracks">Tracks</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#testimonials">Testimonials</a></li>
+    </ul>
+    <button class="btn btn--secondary menu-btn" type="button" aria-expanded="false" aria-controls="sheet">Menu</button>
+    <button class="btn btn--primary contact-btn" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="contact-pop" data-contact-open>Contact me</button>
+  </div>
+</header>
+<!-- Contact pop-up: opened by the header "Contact me" button (and the phone menu's Contact me) -->
+<div class="pop" id="contact-pop" role="dialog" aria-label="Contact details">
+  <p class="pop__title">Get in touch</p>
+  <a class="pop__link" href="mailto:ProdByTom2@gmail.com"><svg class="pop__icon pop__icon--line" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg><span><small>Email</small>ProdByTom2@gmail.com</span></a>
+  <a class="pop__link" href="mailto:tommaflin3@gmail.com"><svg class="pop__icon pop__icon--line" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg><span><small>Email</small>tommaflin3@gmail.com</span></a>
+  <a class="pop__link" href="https://www.linkedin.com/in/tommaflin" target="_blank" rel="noopener"><svg class="pop__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.370 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg><span><small>LinkedIn</small>Tom Maflin</span></a>
+  <hr class="pop__rule">
+  <!-- CV: cv.pdf in the site folder (Thomas Maflin Audio CV 2026), opens in a new tab -->
+  <a class="pop__link" href="cv.pdf" target="_blank" rel="noopener" aria-label="Open CV (PDF, opens in a new tab)"><svg class="pop__icon pop__icon--line" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg><span>Open CV (PDF)</span></a>
+</div>
+<div class="sheet" id="sheet">
+  <a href="#tracks">Tracks</a><a href="#about">About</a><a href="#testimonials">Testimonials</a><a href="#contact" data-contact-open aria-controls="contact-pop">Contact me</a>
+</div>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" style="--h:1">
+    <div class="wrap">
+      <h1>
+        <span class="sr-only">Music production, recording and sound design by Tom</span>
+        <!-- Rotating headline: add, remove or reorder words here; the script cycles through them in order -->
+        <span class="rotator" aria-hidden="true">
+          <span class="rotator__word is-active">Music production</span>
+          <span class="rotator__word">Recording</span>
+          <span class="rotator__word">Sound design</span>
+        </span> <span class="rotator__by" aria-hidden="true">by Tom</span>
+      </h1>
+      <div class="hero__row">
+        <p class="hero__lead">From original music and studio recording to mixing, mastering and sound design for visual media, I help bring creative ideas to life.</p>
+        <ul class="socials" aria-label="Find me online">
+          <li><a href="https://www.beatstars.com/prodbytom1" target="_blank" rel="noopener" aria-label="BeatStars (opens in a new tab)" title="BeatStars"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m17.217 11.996-3.308 1.079v3.478l-2.052-2.818-3.309 1.079 2.043-2.818-2.043-2.819 3.31 1.08 2.05-2.819v3.487zm0 0v7.277H6.854V4.584h10.363v7.412l4.585-1.49v-7.67L19.135 0H2.198v24h16.92l2.684-2.685v-7.83z"/></svg></a></li>
+          <li><a href="https://youtube.com/@prodbytom?si=01ph6OQTTLyLyOo9" target="_blank" rel="noopener" aria-label="YouTube (opens in a new tab)" title="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.070 0 12 0 12s0 3.930.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.930 24 12 24 12s0-3.930-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a></li>
+          <li><a href="https://www.instagram.com/prodbytom_?psln=eHZ6NXA1NjNxankx&amp;utm_source=qr" target="_blank" rel="noopener" aria-label="Instagram (opens in a new tab)" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg></a></li>
+          <li><a href="https://www.linkedin.com/in/tommaflin" target="_blank" rel="noopener" aria-label="LinkedIn (opens in a new tab)" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.370 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></a></li>
+          <li><a href="https://on.soundcloud.com/8cbZb7B5vf2GYbQOLy" target="_blank" rel="noopener" aria-label="SoundCloud (opens in a new tab)" title="SoundCloud"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.999 14.165c-.052 1.796-1.612 3.169-3.4 3.169h-8.18a.68.68 0 0 1-.675-.683V7.862a.747.747 0 0 1 .452-.724s.75-.513 2.333-.513a5.364 5.364 0 0 1 2.763.755 5.433 5.433 0 0 1 2.57 3.54c.282-.08.574-.121.868-.12.884 0 1.73.358 2.347.992s.948 1.49.922 2.373ZM10.721 8.421c.247 2.98.427 5.697 0 8.672a.264.264 0 0 1-.53 0c-.395-2.946-.22-5.718 0-8.672a.264.264 0 0 1 .53 0ZM9.072 9.448c.285 2.659.37 4.986-.006 7.655a.277.277 0 0 1-.55 0c-.331-2.63-.256-5.020 0-7.655a.277.277 0 0 1 .556 0Zm-1.663-.257c.27 2.726.39 5.171 0 7.904a.266.266 0 0 1-.532 0c-.38-2.69-.257-5.21 0-7.904a.266.266 0 0 1 .532 0Zm-1.647.77a26.108 26.108 0 0 1-.008 7.147.272.272 0 0 1-.542 0 27.955 27.955 0 0 1 0-7.147.275.275 0 0 1 .55 0Zm-1.67 1.769c.421 1.865.228 3.5-.029 5.388a.257.257 0 0 1-.514 0c-.21-1.858-.398-3.549 0-5.389a.272.272 0 0 1 .543 0Zm-1.655-.273c.388 1.897.26 3.508-.01 5.412-.026.28-.514.283-.54 0-.244-1.878-.347-3.540-.01-5.412a.283.283 0 0 1 .56 0Zm-1.668.911c.4 1.268.257 2.292-.026 3.572a.257.257 0 0 1-.514 0c-.241-1.262-.354-2.312-.023-3.572a.283.283 0 0 1 .563 0Z"/></svg></a></li>
+        </ul>
+      </div>
+      <div class="reel">
+        <!-- MP3 PLACEHOLDER: audio/showreel.mp3 -->
+        <div class="player" data-src="audio/showreel.mp3" data-peaks="20,22,7,4,2,1,1,19,22,7,4,2,1,1,21,23,19,17,18,18,19,25,28,17,18,20,20,19,81,88,62,27,37,35,85,82,95,60,23,35,56,85,82,91,60,22,35,32,86,93,93,62,24,35,55,86,84,95,60,16,7,24,85,83,89,63,25,36,54,85,82,92,62,25,36,29,83,83,94,65,26,36,53,82,85,92,62,26,35,27,80,85,87,64,28,36,52,82,87,92,64,28,35,25,80,86,88,66,29,36,50,81,86,88,63,29,35,23,79,88,84,64,31,35,47,82,87,89,66,30,35,21,75,88,85,64,34,35,46,80,91,88,66,35,35,21,77,89,86,66,38,35,44,77,90,84,65,39,35,21,72,99,84,66,41,35,43,76,59,24,12,5,2,2,1,13,24,12,5,2,1,1,14,25,12,5,2,1,1,13,24,13,5,2,1,1,1,0,0,0" data-seed="7">
+          <button class="play" type="button" aria-label="Play showreel">
+            <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+            <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>
+          </button>
+          <div class="reel__name"><b>Showreel</b><span class="label">Production and mix highlights</span></div>
+          <div class="wave" role="slider" aria-label="Seek showreel" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"></div>
+          <span class="time">0:00 / --:--</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRACKS -->
+  <section class="section" id="tracks" style="--h:1">
+    <div class="wrap">
+      <div class="head head--tabs">
+        <h2 class="sr-only">Work</h2>
+        <div class="tabs" role="tablist" aria-label="Work">
+          <button class="tab" role="tab" id="tab-tracks" aria-selected="true" aria-controls="panel-tracks" type="button">Recent tracks</button>
+          <button class="tab" role="tab" id="tab-sync" aria-selected="false" aria-controls="panel-sync" tabindex="-1" type="button">Sync media</button>
+        </div>
+      </div>
+      <div class="panel" role="tabpanel" id="panel-tracks" aria-labelledby="tab-tracks">
+      <ol class="tracks">
+        <!-- TRACKS: audio/track-01.mp3 … track-07.mp3 — edit titles, credits, genre and BPM tags to match -->
+        <li class="player track" data-src="audio/track-01.mp3" data-peaks="24,30,29,28,29,26,30,28,29,28,28,31,28,28,27,27,28,28,34,71,80,71,45,34,43,39,35,70,72,96,79,68,36,60,77,66,98,64,73,97,78,71,35,40,67,39,94,89,35,86,71,68,32,74,65,84,93,47,87,97,65,68,32,46,33,40,54,66,84,96,61,60,36,91,37,94,89,35,93,27,50,52,28,29,27,31,24,26,26,23,60,44,25,42,26,38,22,23,68,80,70,39,34,40,37,31,70,71,95,79,68,33,59,76,65,99,62,72,98,75,69,31,39,66,39,94,86,33,86,69,67,29,74,64,85,91,46,87,96,65,66,30,44,31,38,52,65,84,96,62,58,28,91,33,96,86,33,94,28,56,55,32,33,29,36,27,30,29,25,60,42,29,43,29,41,31,27,37,29,25,28,27,27,28,23,21,19,17,17,15,14,12,9,7,6,3,2,0,0,0" data-seed="11">
+          <button class="play" type="button" aria-label="Play Fade"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg></button>
+          <div class="track__title"><b>Fade</b></div>
+          <div class="wave" role="slider" aria-label="Seek Fade" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"></div>
+          <span class="tags"><span class="tag">Trap</span><span class="tag tag--bpm">132 BPM</span></span>
+          <span class="time">--:--</span>
+        </li>
+        <li class="player track" data-src="audio/track-02.mp3" data-peaks="8,9,11,11,15,11,13,10,10,7,10,8,10,5,6,9,9,8,9,10,13,10,10,13,10,16,13,8,16,18,11,14,18,18,65,28,16,83,60,91,16,73,88,66,25,12,98,67,72,17,88,73,65,26,59,83,85,38,63,82,77,39,12,78,68,90,22,74,88,49,25,11,49,51,73,8,55,80,20,25,12,15,17,13,13,25,17,28,13,19,16,19,12,26,17,22,16,11,18,15,17,10,15,15,66,25,48,90,80,50,57,80,60,69,12,57,85,90,29,66,89,72,25,19,84,57,92,12,73,88,66,25,12,99,78,59,43,85,66,52,11,13,59,76,33,13,84,51,24,12,16,12,17,9,25,17,19,25,13,19,21,13,10,28,18,19,17,12,17,18,14,13,15,14,9,7,8,6,6,10,8,10,8,7,9,12,10,8,13,11,13,3,0,0,0,0,0,0,0,0" data-seed="23">
+          <button class="play" type="button" aria-label="Play Spanish Drill with Prod.Bingoo"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg></button>
+          <div class="track__title"><b>Spanish Drill <small class="track__with">with Prod.Bingoo</small></b></div>
+          <div class="wave" role="slider" aria-label="Seek Spanish Drill with Prod.Bingoo" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"></div>
+          <span class="tags"><span class="tag">Drill</span><span class="tag tag--bpm">144 BPM</span></span>
+          <span class="time">--:--</span>
+        </li>
+        <li class="player track" data-src="audio/track-03.mp3" data-peaks="29,29,20,23,21,25,20,17,29,24,26,31,38,33,24,28,25,36,35,15,29,29,42,72,56,51,88,74,77,74,52,80,52,71,98,51,52,77,69,51,87,46,78,66,43,88,78,56,46,73,93,73,75,51,70,67,69,80,73,54,68,79,15,99,46,57,86,28,87,62,53,40,22,34,29,41,47,39,32,31,34,46,54,29,26,22,36,46,49,26,27,23,38,28,25,20,24,18,25,18,18,28,23,27,33,42,17,27,23,35,28,32,13,28,31,59,64,54,75,73,67,98,48,68,77,32,91,79,54,42,78,68,71,76,50,71,68,68,76,75,55,50,93,67,91,57,51,91,30,74,95,50,49,77,69,66,78,51,74,67,64,77,50,52,33,26,34,26,47,46,32,30,34,35,51,52,23,27,21,42,45,46,21,25,24,30,0,0,0,0,0,0,0,0,0,0,0,0,0,0" data-seed="37">
+          <button class="play" type="button" aria-label="Play Bounce"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg></button>
+          <div class="track__title"><b>Bounce</b></div>
+          <div class="wave" role="slider" aria-label="Seek Bounce" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"></div>
+          <span class="tags"><span class="tag">Hip-hop</span><span class="tag tag--bpm">144 BPM</span></span>
+          <span class="time">--:--</span>
+        </li>
+        <li class="player track" data-src="audio/track-04.mp3" data-peaks="47,29,13,28,23,26,28,28,25,14,41,25,20,41,30,21,25,27,22,21,30,24,20,37,32,25,66,63,54,25,38,66,73,82,33,38,32,41,63,90,79,66,22,37,50,69,95,30,41,25,47,38,56,81,68,42,31,36,72,82,65,42,22,42,35,77,99,64,53,25,38,67,75,79,33,38,33,41,41,68,57,66,15,30,50,69,55,28,38,14,43,51,70,57,66,38,26,35,69,59,31,23,17,35,29,21,66,64,52,24,38,67,78,76,33,38,33,41,64,92,77,64,24,37,52,69,95,30,41,24,47,38,63,76,68,40,32,39,71,86,60,41,23,42,38,76,98,65,51,24,37,68,80,73,36,35,34,40,41,68,59,64,14,31,55,66,54,27,39,14,43,52,71,55,68,31,27,37,68,60,29,22,18,36,28,21,14,1,0,0,0,0,0,0,0,0,0,0,0,0" data-seed="41">
+          <button class="play" type="button" aria-label="Play RnB Type Beat"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg></button>
+          <div class="track__title"><b>RnB Type Beat</b></div>
+          <div class="wave" role="slider" aria-label="Seek RnB Type Beat" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"></div>
+          <span class="tags"><span class="tag">R&amp;B</span><span class="tag tag--bpm">114 BPM</span></span>
+          <span class="time">--:--</span>
+        </li>
+        <li class="player track" data-src="audio/track-05.mp3" data-peaks="8,9,10,13,9,9,12,11,10,9,11,10,9,8,9,7,8,9,7,8,8,28,99,84,48,60,71,77,89,93,33,88,83,98,83,46,60,73,77,89,91,39,87,84,98,82,45,60,75,77,89,89,44,87,83,99,81,45,60,75,79,89,87,48,86,70,16,10,9,17,12,14,12,7,12,10,49,51,10,20,57,12,51,12,71,12,54,69,90,78,36,13,75,82,87,53,59,80,75,90,76,34,7,75,85,87,50,62,79,79,99,74,39,57,75,91,86,78,65,90,79,99,72,47,51,74,93,85,76,68,90,79,99,71,52,49,77,90,85,75,71,90,80,98,69,57,47,78,90,86,70,73,89,35,15,10,13,14,14,15,7,9,11,11,49,51,10,59,14,51,15,46,54,38,61,75,89,63,23,47,72,90,80,31,81,77,78,89,61,20,50,73,90,79,28,83,76,3,0,0" data-seed="53">
+          <button class="play" type="button" aria-label="Play Basic with Lucz"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg></button>
+          <div class="track__title"><b>Basic <small class="track__with">with Lucz</small></b></div>
+          <div class="wave" role="slider" aria-label="Seek Basic with Lucz" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"></div>
+          <span class="tags"><span class="tag">Trap</span><span class="tag tag--bpm">150 BPM</span></span>
+          <span class="time">--:--</span>
+        </li>
+        <li class="player track" data-src="audio/track-06.mp3" data-peaks="13,28,21,17,23,17,13,7,3,9,26,18,11,29,26,21,10,2,60,68,42,18,50,66,37,38,33,69,71,44,39,67,64,60,29,8,59,75,62,22,42,70,38,34,64,68,53,37,34,39,69,63,38,9,70,73,67,31,44,93,47,54,41,82,76,70,34,76,97,63,57,60,72,82,78,44,40,86,53,50,60,86,77,40,49,42,82,79,64,61,37,81,71,42,33,83,56,54,47,44,98,74,41,57,78,85,64,61,31,99,83,63,40,81,65,45,44,70,92,45,54,45,80,83,66,60,17,80,73,56,32,74,73,38,47,35,91,78,58,49,76,92,66,66,27,87,79,73,26,50,82,39,42,66,87,55,41,34,43,94,65,56,42,62,66,62,22,35,90,45,46,32,81,72,63,23,70,93,64,50,52,68,77,74,37,32,81,52,45,54,79,73,30,47,39,80,78,58,53,9" data-seed="67">
+          <button class="play" type="button" aria-label="Play GreenLight with Bookz"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg></button>
+          <div class="track__title"><b>GreenLight <small class="track__with">with Bookz</small></b></div>
+          <div class="wave" role="slider" aria-label="Seek GreenLight with Bookz" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"></div>
+          <span class="tags"><span class="tag">Hip-hop</span><span class="tag tag--bpm">82 BPM</span></span>
+          <span class="time">--:--</span>
+        </li>
+        <li class="player track" data-src="audio/track-07.mp3" data-peaks="22,18,15,19,14,12,20,36,22,11,16,15,9,18,24,29,85,96,71,10,27,34,86,92,15,17,8,91,83,59,95,40,76,95,70,31,55,94,83,67,97,96,63,74,74,89,35,85,95,55,34,67,99,72,77,96,97,97,59,81,8,7,7,6,7,6,55,97,54,19,77,96,96,63,92,70,49,96,93,29,35,86,97,45,96,96,96,94,42,97,59,61,96,85,27,49,90,93,49,96,96,96,86,61,96,44,74,95,74,27,54,93,85,63,96,97,97,75,70,91,37,84,95,59,33,65,97,74,75,97,96,96,65,30,23,31,29,22,21,33,63,99,60,70,28,29,25,24,26,18,12,12,13,13,18,71,97,38,66,9,12,14,29,96,55,53,96,85,9,39,85,94,36,97,97,96,86,51,96,41,69,95,74,12,50,94,84,56,96,96,96,75,20,11,8,2,2,1,1,1" data-seed="79">
+          <button class="play" type="button" aria-label="Play NOW"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg><svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg></button>
+          <div class="track__title"><b>NOW</b></div>
+          <div class="wave" role="slider" aria-label="Seek NOW" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0"></div>
+          <span class="tags"><span class="tag">Hip-hop</span><span class="tag tag--bpm">95 BPM</span></span>
+          <span class="time">--:--</span>
+        </li>
+      </ol>
+      </div>
+      <div class="panel" role="tabpanel" id="panel-sync" aria-labelledby="tab-sync" hidden>
+        <!-- VIDEO PLACEHOLDERS: videos/video-01.webm … video-03.webm — edit titles and credits to match -->
+        <div class="vcar" aria-roledescription="carousel" aria-label="Sync media videos">
+          <button class="vchev vchev--prev" type="button" data-dir="-1" aria-label="Previous video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <button class="vchev vchev--next" type="button" data-dir="1" aria-label="Next video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <ul class="vtrack" tabindex="0" aria-label="Videos, scroll or use the arrows">
+              <li class="video vslide" data-src="videos/video-01.webm" data-youtube="" role="group" aria-roledescription="slide">
+              <div class="video__frame">
+                <video playsinline preload="none" poster="videos/video-01.jpg"></video>
+                <button class="video__play" type="button" aria-label="Play Nike Hypervenom"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></button>
+                <span class="video__note"></span>
+              </div>
+              <div class="video__meta"><b>Nike Hypervenom</b><span>Soundscape · Sound design</span></div>
+            </li>
+              <li class="video vslide" data-src="videos/video-02.webm" data-youtube="" role="group" aria-roledescription="slide">
+              <div class="video__frame">
+                <video playsinline preload="none"></video>
+                <button class="video__play" type="button" aria-label="Play Video two"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></button>
+                <span class="video__note">Add videos/video-02.webm</span>
+              </div>
+              <div class="video__meta"><b>Video two</b><span>Client or project · Sound design</span></div>
+            </li>
+              <li class="video vslide" data-src="videos/video-03.webm" data-youtube="" role="group" aria-roledescription="slide">
+              <div class="video__frame">
+                <video playsinline preload="none"></video>
+                <button class="video__play" type="button" aria-label="Play Video three"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg></button>
+                <span class="video__note">Add videos/video-03.webm</span>
+              </div>
+              <div class="video__meta"><b>Video three</b><span>Client or project · Sound design</span></div>
+            </li>
+          </ul>
+          <div class="vside">
+            <div class="vnav">
+              <button class="vnav__btn" type="button" data-dir="-1" aria-label="Previous video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              <span class="vnav__count mono" aria-live="polite"><b>1</b> / 3</span>
+              <button class="vnav__btn" type="button" data-dir="1" aria-label="Next video"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+            </div>
+            <ol class="vlist">
+              <li><button class="vlist__item is-active" type="button" data-i="0"><span class="vlist__n">1</span>Nike Hypervenom</button></li>
+              <li><button class="vlist__item" type="button" data-i="1"><span class="vlist__n">2</span>Video two</button></li>
+              <li><button class="vlist__item" type="button" data-i="2"><span class="vlist__n">3</span>Video three</button></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section about" id="about" style="--h:1">
+    <div class="wrap">
+      <div class="about__grid">
+        <div class="about__text">
+          <h2>ProdbyTom/<wbr>Tom Maflin</h2>
+          <p>I’m Tom Maflin, a producer, engineer and musician with a lifelong passion for music. I play drums, keys and guitar, and work across electronic music production, recording, mixing, mastering and sound design.</p>
+          <p>I help artists shape their ideas into finished tracks, combining practical studio skills with strong digital organisation and project management.</p>
+          <!-- Software: icons in icons/ (256px, all the same Mac-style shape) -->
+          <div class="tools">
+            <span class="tools__label">Proficient in</span>
+            <ul class="tools__list">
+              <li><img src="icons/fl-studio.png" alt="" width="32" height="32" loading="lazy" decoding="async"><span>FL Studio</span></li>
+              <li><img src="icons/logic-pro.png" alt="" width="32" height="32" loading="lazy" decoding="async"><span>Logic Pro</span></li>
+              <li><img src="icons/dolby-atmos.png" alt="" width="32" height="32" loading="lazy" decoding="async"><span>Dolby Atmos</span></li>
+            </ul>
+          </div>
+          <!-- Experience in: software he has used (same icon style as "Proficient in") -->
+          <div class="tools tools--exp">
+            <span class="tools__label">Experience in</span>
+            <ul class="tools__list">
+              <li><img src="icons/pro-tools.png" alt="" width="32" height="32" loading="lazy" decoding="async"><span>Pro Tools</span></li>
+              <li><img src="icons/ableton-live.png" alt="" width="32" height="32" loading="lazy" decoding="async"><span>Ableton Live</span></li>
+            </ul>
+          </div>
+          <button class="more__btn" type="button" aria-expanded="false" aria-controls="about-more">
+            <span class="more__label">Read more</span>
+            <span class="more__arrow" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 9l7 7 7-7"/></svg></span>
+          </button>
+        </div>
+        <div class="about__photo">
+          <!-- Photo shown in greyscale: top 8% and bottom third cropped off (CSS: filter + aspect-ratio + object-position) -->
+          <img src="about.jpg" alt="Tom Maflin playing a white electric guitar in the studio" width="1125" height="2000" loading="lazy" decoding="async">
+        </div>
+      </div>
+      <!-- Read more: the link under the About text opens the longer bio below -->
+      <div class="more">
+        <div class="more__body" id="about-more" inert>
+          <div class="more__clip">
+            <div class="more__inner">
+              <div class="more__grid">
+              <div class="more__item"><h3>Music production</h3><p>I produce original beats and instrumentals across a range of genres, and work with artists on arrangements, drum programming, sounds and overall direction. I’ve built a catalogue of more than 2,000 original beats and continue to produce and license work through BeatStars, YouTube and direct collaborations.</p></div>
+              <div class="more__item"><h3>Recording and vocal production</h3><p>I run recording sessions for vocals and instruments, from setting up the session and microphones to editing takes and helping artists get the performance they want. I’m comfortable working in both DAW-based and analogue recording setups.</p></div>
+              <div class="more__item"><h3>Mixing and mastering</h3><p>I edit, mix and master music for release, using EQ, compression, effects and creative processing to bring the parts together. I also organise sessions and prepare clearly labelled files and final exports.</p></div>
+              <div class="more__item"><h3>Sound design for visual media</h3><p>Through academic and project work, I’ve designed and edited Foley, created sound effects, and redesigned audio for gameplay footage. I enjoy building a sound world to fit the brief and balancing dialogue, music and effects into a cohesive final piece.</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACHIEVEMENTS — placeholder numbers: replace each figure and label with your real stats -->
+  <section class="section achievements" id="achievements" style="--h:1">
+    <div class="wrap">
+      <div class="head">
+        <h2>My achievements</h2>
+      </div>
+      <ul class="stats">
+        <li class="stat"><svg class="stat__logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.070 0 12 0 12s0 3.930.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.930 24 12 24 12s0-3.930-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg><b class="stat__num">102k</b><span class="stat__label">YouTube views</span><a class="stat__link" href="https://youtube.com/@prodbytom?si=01ph6OQTTLyLyOo9" target="_blank" rel="noopener" aria-label="YouTube profile (opens in a new tab)"></a></li>
+        <li class="stat"><svg class="stat__logo" viewBox="0 0 24 24" aria-hidden="true"><path d="m17.217 11.996-3.308 1.079v3.478l-2.052-2.818-3.309 1.079 2.043-2.818-2.043-2.819 3.31 1.08 2.05-2.819v3.487zm0 0v7.277H6.854V4.584h10.363v7.412l4.585-1.49v-7.67L19.135 0H2.198v24h16.92l2.684-2.685v-7.83z"/></svg><b class="stat__num">32k</b><span class="stat__label">BeatStars plays</span><a class="stat__link" href="https://www.beatstars.com/prodbytom1" target="_blank" rel="noopener" aria-label="BeatStars profile (opens in a new tab)"></a></li>
+        <li class="stat"><!-- dBs Institute logo --><svg class="stat__logo" viewBox="1.4 15.7 114 114" aria-hidden="true"><g><path d="M36.06,71.73c-.47-.27-1.14-.46-2.13-.47-1.01,0-1.7.19-2.17.45-.48.27-.78.61-1.02,1.09-.49.94-.59,2.48-.58,4.09,0,1.23.04,2.4.28,3.31.25.92.62,1.51,1.32,1.91.48.26,1.16.45,2.17.45.99,0,1.66-.2,2.13-.47.47-.28.78-.64,1.02-1.14.49-.99.59-2.53.58-4.06,0-1.13-.04-2.28-.28-3.19-.25-.93-.63-1.56-1.32-1.97"/><path d="M61.8,75.26h-6.83v7.05h6.83c1.7,0,2.79-.48,3.47-1.1.68-.63,1-1.47,1-2.42,0-.95-.33-1.79-1-2.42-.68-.63-1.77-1.1-3.47-1.11"/><path d="M64.77,68.27c.67-.59.99-1.35.99-2.3,0-.91-.32-1.69-1-2.28-.67-.59-1.77-1.04-3.43-1.04h-6.36v6.64h6.36c1.66,0,2.77-.44,3.44-1.02"/><path d="M58.41,16.69C27.46,16.69,2.37,41.78,2.37,72.74s25.09,56.04,56.04,56.04,56.04-25.09,56.04-56.04-25.09-56.04-56.04-56.04M44.38,88.53h-6.72v-1.22c-1.47.91-3.26,1.47-5.18,1.47h-.03c-3.16,0-5.58-1.32-7.09-3.1-.73-.83-1.28-1.78-1.55-3.1-.29-1.33-.37-3.03-.38-5.68,0-2.63.09-4.32.38-5.64.28-1.32.82-2.27,1.55-3.09,1.52-1.8,3.94-3.12,7.12-3.11,1.98,0,3.68.61,5.18,1.56v-9.92h6.72v31.84ZM70.19,85.99c-1.89,1.64-4.44,2.54-7.16,2.54h-15.05v-31.84h13.92c3.42,0,6.14.87,8.03,2.48,1.89,1.6,2.85,3.93,2.84,6.51,0,1.37-.29,2.81-1.17,4.1-.56.83-1.34,1.58-2.38,2.23,1.04.56,1.89,1.32,2.53,2.21,1.04,1.43,1.53,3.16,1.53,4.86,0,2.85-1.2,5.27-3.1,6.91M93.07,88.19h-17.35v-5.57h17.35v5.57ZM92.66,74.62c-.47.83-1.13,1.53-1.93,2.07-1.59,1.09-3.7,1.63-6.04,1.63h-.02c-3.25,0-6.2-1.08-8.77-3.43l-.65-.58.28-.3,1.99-2.17,1.34-1.46.6.55s0,0,.01.01c.77.73,1.56,1.27,2.44,1.63.88.36,1.87.55,3.08.55.75,0,1.41-.11,1.9-.29.49-.19.8-.44.94-.68.1-.16.15-.33.15-.57,0-.21-.04-.33-.08-.42-.05-.08-.11-.15-.22-.24-.23-.16-.71-.3-1.32-.34l-3.38-.29c-1.7-.14-3.23-.7-4.38-1.73-1.15-1.03-1.85-2.57-1.84-4.39,0-1.07.22-2.05.64-2.89.42-.84,1.02-1.54,1.75-2.09,1.46-1.09,3.38-1.59,5.51-1.59,3.35,0,5.76.98,7.71,2.5h0s.09.07.09.07c.06.04.11.09.17.13,0,0,.02.02.03.03l.69.57-.79.85-2.53,2.74-.2.21-.89-.58c-1.29-.81-2.56-1.31-4.28-1.31-.85,0-1.44.13-1.81.3-.37.18-.51.36-.6.56-.06.14-.1.31-.1.53,0,.09.01.15.04.22.03.07.08.14.19.23.21.18.7.4,1.56.46l3.16.22c2.11.13,3.7.84,4.76,2.02,1.06,1.18,1.51,2.75,1.51,4.39,0,1.05-.26,2.03-.72,2.87"/></g><g><rect x="141.62" y="43.67" width="4.75" height="25.57"/><path d="M160.5,50.69c-1.36,0-2.56.29-3.58.86-1.02.57-1.83,1.35-2.41,2.32v-2.74h-4.75v18.12h4.75v-9.35c0-1.63.41-2.9,1.24-3.82.83-.91,1.89-1.37,3.18-1.37s2.32.41,2.94,1.22c.62.82.93,2,.93,3.56v9.75h4.75v-10.19c0-2.73-.61-4.8-1.83-6.23-1.22-1.42-2.96-2.14-5.22-2.14Z"/><path d="M184.01,59.77c-.55-.38-1.16-.68-1.84-.9-.68-.22-1.38-.38-2.08-.47-.24-.05-.57-.1-.99-.16-.41-.06-.81-.12-1.19-.18-.38-.06-.69-.1-.93-.13-1.61-.29-2.41-.88-2.41-1.75,0-.51.26-.94.77-1.3.51-.35,1.24-.53,2.19-.53.8,0,1.52.18,2.14.55.62.37.97.91,1.04,1.64h4.6c-.17-1.85-.94-3.29-2.3-4.31-1.36-1.02-3.2-1.53-5.52-1.53s-4.07.55-5.28,1.66c-1.21,1.11-1.81,2.47-1.81,4.07,0,1.1.25,2.01.75,2.74.5.73,1.16,1.32,1.99,1.75.83.44,1.74.76,2.74.95.37.07.84.16,1.42.26.58.1,1.06.17,1.42.22,1,.12,1.69.32,2.08.58.39.27.58.63.58,1.1,0,.56-.27,1.04-.82,1.42-.55.39-1.35.58-2.39.58s-1.84-.23-2.54-.69c-.69-.46-1.13-1.07-1.3-1.83h-4.86c.19,1.88,1.07,3.37,2.61,4.49,1.55,1.12,3.51,1.68,5.9,1.68,1.68,0,3.1-.26,4.26-.77,1.16-.51,2.04-1.22,2.65-2.14.61-.91.91-1.97.91-3.16,0-.93-.16-1.7-.49-2.34-.33-.63-.77-1.14-1.32-1.52Z"/><path d="M194.44,46.27h-4.75v4.86h-3.11v3.98h3.11v8.55c0,1.53.21,2.71.62,3.53.41.82,1.04,1.36,1.88,1.64.84.28,1.87.42,3.09.42h3.62v-4.06h-2.19c-.58,0-1.05-.05-1.39-.15-.34-.1-.57-.3-.69-.6-.12-.3-.18-.76-.18-1.37v-7.96h4.57v-3.98h-4.57v-4.86Z"/><rect x="200.98" y="43.53" width="4.6" height="4.6"/><rect x="200.87" y="51.13" width="4.75" height="18.12"/><path d="M215.16,46.27h-4.75v4.86h-3.11v3.98h3.11v8.55c0,1.53.21,2.71.62,3.53.41.82,1.04,1.36,1.88,1.64.84.28,1.87.42,3.09.42h3.62v-4.06h-2.19c-.58,0-1.05-.05-1.39-.15-.34-.1-.57-.3-.69-.6-.12-.3-.18-.76-.18-1.37v-7.96h4.57v-3.98h-4.57v-4.86Z"/><path d="M233.53,60.48c0,1.63-.35,2.9-1.06,3.82-.71.91-1.71,1.37-3,1.37-1.15,0-2.02-.41-2.61-1.22-.6-.82-.9-2-.9-3.56v-9.75h-4.75v10.19c0,2.73.6,4.8,1.81,6.23,1.21,1.42,2.84,2.14,4.91,2.14,1.34,0,2.47-.28,3.4-.84.93-.56,1.66-1.32,2.19-2.27v2.67h4.75v-18.12h-4.75v9.35Z"/><path d="M247.78,46.27h-4.75v4.86h-3.11v3.98h3.11v8.55c0,1.53.21,2.71.62,3.53.41.82,1.04,1.36,1.88,1.64.84.28,1.87.42,3.09.42h3.62v-4.06h-2.19c-.58,0-1.05-.05-1.39-.15-.34-.1-.57-.3-.69-.6-.12-.3-.18-.76-.18-1.37v-7.96h4.57v-3.98h-4.57v-4.86Z"/><path d="M270.19,55.03c-.77-1.34-1.83-2.4-3.2-3.18-1.36-.78-2.95-1.17-4.75-1.17s-3.52.41-4.93,1.22c-1.41.82-2.52,1.95-3.31,3.42-.79,1.46-1.19,3.13-1.19,5.01s.4,3.48,1.21,4.88c.8,1.4,1.91,2.5,3.32,3.29,1.41.79,3.04,1.19,4.9,1.19,1.46,0,2.78-.27,3.95-.8,1.17-.54,2.15-1.27,2.94-2.21.79-.94,1.36-1.98,1.7-3.12h-4.82c-.34.68-.83,1.23-1.46,1.64-.63.41-1.41.62-2.34.62s-1.71-.2-2.41-.6c-.71-.4-1.27-.98-1.68-1.74-.34-.62-.54-1.35-.59-2.16h13.75c.05-.32.07-.62.07-.91v-.8c0-1.7-.38-3.23-1.15-4.57ZM257.62,58.4c.1-.59.27-1.11.52-1.55.43-.77,1-1.35,1.74-1.74.73-.39,1.53-.58,2.41-.58,1.17,0,2.16.35,2.96,1.06.8.71,1.24,1.64,1.32,2.81h-8.94Z"/></g><g><path d="M156.23,84.15c-1.46-.8-3.11-1.21-4.93-1.21s-3.44.4-4.91,1.21c-1.47.8-2.64,1.92-3.49,3.34-.85,1.42-1.28,3.08-1.28,4.95s.43,3.5,1.28,4.93c.85,1.44,2.01,2.56,3.47,3.36,1.46.8,3.11,1.21,4.93,1.21s3.47-.4,4.93-1.21c1.46-.8,2.62-1.92,3.47-3.36.85-1.44,1.28-3.08,1.28-4.93s-.43-3.53-1.28-4.95c-.85-1.42-2.01-2.54-3.47-3.34ZM155.44,95.44c-.43.8-1,1.41-1.74,1.81-.73.4-1.53.6-2.41.6s-1.68-.2-2.41-.6c-.73-.4-1.31-1-1.74-1.81-.43-.8-.64-1.8-.64-3s.22-2.19.66-3c.44-.8,1.02-1.41,1.75-1.81.73-.4,1.52-.6,2.37-.6s1.67.2,2.39.6c.72.4,1.3,1,1.74,1.81.44.8.66,1.8.66,3s-.21,2.19-.64,3Z"/><path d="M167.13,75.6c-.89.27-1.53.82-1.92,1.66-.39.84-.58,2.1-.58,3.78v2.34h-2.48v3.98h2.48v14.14h4.75v-14.14h3.51v-3.98h-3.51v-2.05c0-.85.15-1.41.44-1.68.29-.27.88-.4,1.75-.4h1.32v-4.06h-2.23c-1.46,0-2.64.13-3.53.4Z"/><polygon points="200.94 95.31 192.8 75.93 187.1 75.93 187.1 101.5 191.85 101.5 191.85 84.63 198.97 101.5 202.77 101.5 209.86 84.65 209.86 101.5 214.61 101.5 214.61 75.93 208.95 75.93 200.94 95.31"/><path d="M229.92,92.74c0,1.63-.35,2.9-1.06,3.82-.71.91-1.71,1.37-3,1.37-1.15,0-2.02-.41-2.61-1.22-.6-.82-.9-2-.9-3.56v-9.75h-4.75v10.19c0,2.73.6,4.8,1.81,6.23,1.21,1.42,2.84,2.14,4.91,2.14,1.34,0,2.47-.28,3.4-.84.93-.56,1.66-1.32,2.19-2.27v2.67h4.75v-18.12h-4.75v9.35Z"/><path d="M251.23,92.02c-.55-.38-1.16-.68-1.84-.9-.68-.22-1.38-.38-2.08-.48-.24-.05-.57-.1-.99-.16-.41-.06-.81-.12-1.19-.18-.38-.06-.69-.1-.93-.13-1.61-.29-2.41-.88-2.41-1.75,0-.51.26-.94.77-1.3.51-.35,1.24-.53,2.19-.53.8,0,1.52.18,2.14.55.62.37.97.91,1.04,1.64h4.6c-.17-1.85-.94-3.29-2.3-4.31-1.36-1.02-3.2-1.53-5.52-1.53s-4.07.55-5.28,1.66c-1.21,1.11-1.81,2.47-1.81,4.07,0,1.1.25,2.01.75,2.74.5.73,1.16,1.32,1.99,1.75.83.44,1.74.76,2.74.95.37.07.84.16,1.42.26.58.1,1.06.17,1.42.22,1,.12,1.69.32,2.08.58.39.27.58.63.58,1.1,0,.56-.27,1.04-.82,1.42-.55.39-1.35.58-2.39.58s-1.84-.23-2.54-.69c-.69-.46-1.13-1.07-1.3-1.83h-4.86c.19,1.88,1.07,3.37,2.61,4.49,1.55,1.12,3.51,1.68,5.9,1.68,1.68,0,3.1-.26,4.26-.77,1.16-.51,2.04-1.22,2.65-2.14.61-.91.91-1.97.91-3.16,0-.93-.16-1.7-.49-2.34-.33-.63-.77-1.14-1.32-1.52Z"/><rect x="255.71" y="83.38" width="4.75" height="18.12"/><rect x="255.82" y="75.79" width="4.6" height="4.6"/><path d="M274.7,97.18c-.71.47-1.55.71-2.52.71-.83,0-1.6-.21-2.3-.64-.71-.43-1.27-1.05-1.68-1.88-.41-.83-.62-1.8-.62-2.92s.21-2.12.62-2.92c.41-.8.97-1.42,1.68-1.86.71-.44,1.47-.66,2.3-.66.97,0,1.81.25,2.52.75.71.5,1.17,1.16,1.39,1.99h5.01c-.44-2.12-1.45-3.78-3.03-4.99-1.58-1.21-3.53-1.81-5.85-1.81-1.85,0-3.49.41-4.91,1.22-1.42.82-2.55,1.94-3.36,3.36-.82,1.42-1.22,3.06-1.22,4.91s.41,3.49,1.22,4.91c.82,1.42,1.94,2.55,3.36,3.36,1.42.82,3.06,1.22,4.91,1.22,2.31,0,4.27-.62,5.86-1.86,1.59-1.24,2.6-2.89,3.01-4.93h-5.01c-.22.88-.68,1.55-1.39,2.03Z"/></g><g><path d="M36.06,71.73c-.47-.27-1.14-.46-2.13-.47-1.01,0-1.7.19-2.17.45-.48.27-.78.61-1.02,1.09-.49.94-.59,2.48-.58,4.09,0,1.23.04,2.4.28,3.31.25.92.62,1.51,1.32,1.91.48.26,1.16.45,2.17.45.99,0,1.66-.2,2.13-.47.47-.28.78-.64,1.02-1.14.49-.99.59-2.53.58-4.06,0-1.13-.04-2.28-.28-3.19-.25-.93-.63-1.56-1.32-1.97"/><path d="M61.8,75.26h-6.83v7.05h6.83c1.7,0,2.79-.48,3.47-1.1.68-.63,1-1.47,1-2.42,0-.95-.33-1.79-1-2.42-.68-.63-1.77-1.1-3.47-1.11"/><path d="M64.77,68.27c.67-.59.99-1.35.99-2.3,0-.91-.32-1.69-1-2.28-.67-.59-1.77-1.04-3.43-1.04h-6.36v6.64h6.36c1.66,0,2.77-.44,3.44-1.02"/><path d="M58.41,16.69C27.46,16.69,2.37,41.78,2.37,72.74s25.09,56.04,56.04,56.04,56.04-25.09,56.04-56.04-25.09-56.04-56.04-56.04M44.38,88.53h-6.72v-1.22c-1.47.91-3.26,1.47-5.18,1.47h-.03c-3.16,0-5.58-1.32-7.09-3.1-.73-.83-1.28-1.78-1.55-3.1-.29-1.33-.37-3.03-.38-5.68,0-2.63.09-4.32.38-5.64.28-1.32.82-2.27,1.55-3.09,1.52-1.8,3.94-3.12,7.12-3.11,1.98,0,3.68.61,5.18,1.56v-9.92h6.72v31.84ZM70.19,85.99c-1.89,1.64-4.44,2.54-7.16,2.54h-15.05v-31.84h13.92c3.42,0,6.14.87,8.03,2.48,1.89,1.6,2.85,3.93,2.84,6.51,0,1.37-.29,2.81-1.17,4.1-.56.83-1.34,1.58-2.38,2.23,1.04.56,1.89,1.32,2.53,2.21,1.04,1.43,1.53,3.16,1.53,4.86,0,2.85-1.2,5.27-3.1,6.91M93.07,88.19h-17.35v-5.57h17.35v5.57ZM92.66,74.62c-.47.83-1.13,1.53-1.93,2.07-1.59,1.09-3.7,1.63-6.04,1.63h-.02c-3.25,0-6.2-1.08-8.77-3.43l-.65-.58.28-.3,1.99-2.17,1.34-1.46.6.55s0,0,.01.01c.77.73,1.56,1.27,2.44,1.63.88.36,1.87.55,3.08.55.75,0,1.41-.11,1.9-.29.49-.19.8-.44.94-.68.1-.16.15-.33.15-.57,0-.21-.04-.33-.08-.42-.05-.08-.11-.15-.22-.24-.23-.16-.71-.3-1.32-.34l-3.38-.29c-1.7-.14-3.23-.7-4.38-1.73-1.15-1.03-1.85-2.57-1.84-4.39,0-1.07.22-2.05.64-2.89.42-.84,1.02-1.54,1.75-2.09,1.46-1.09,3.38-1.59,5.51-1.59,3.35,0,5.76.98,7.71,2.5h0s.09.07.09.07c.06.04.11.09.17.13,0,0,.02.02.03.03l.69.57-.79.85-2.53,2.74-.2.21-.89-.58c-1.29-.81-2.56-1.31-4.28-1.31-.85,0-1.44.13-1.81.3-.37.18-.51.36-.6.56-.06.14-.1.31-.1.53,0,.09.01.15.04.22.03.07.08.14.19.23.21.18.7.4,1.56.46l3.16.22c2.11.13,3.7.84,4.76,2.02,1.06,1.18,1.51,2.75,1.51,4.39,0,1.05-.26,2.03-.72,2.87"/></g><g><rect x="141.62" y="43.67" width="4.75" height="25.57"/><path d="M160.5,50.69c-1.36,0-2.56.29-3.58.86-1.02.57-1.83,1.35-2.41,2.32v-2.74h-4.75v18.12h4.75v-9.35c0-1.63.41-2.9,1.24-3.82.83-.91,1.89-1.37,3.18-1.37s2.32.41,2.94,1.22c.62.82.93,2,.93,3.56v9.75h4.75v-10.19c0-2.73-.61-4.8-1.83-6.23-1.22-1.42-2.96-2.14-5.22-2.14Z"/><path d="M184.01,59.77c-.55-.38-1.16-.68-1.84-.9-.68-.22-1.38-.38-2.08-.47-.24-.05-.57-.1-.99-.16-.41-.06-.81-.12-1.19-.18-.38-.06-.69-.1-.93-.13-1.61-.29-2.41-.88-2.41-1.75,0-.51.26-.94.77-1.3.51-.35,1.24-.53,2.19-.53.8,0,1.52.18,2.14.55.62.37.97.91,1.04,1.64h4.6c-.17-1.85-.94-3.29-2.3-4.31-1.36-1.02-3.2-1.53-5.52-1.53s-4.07.55-5.28,1.66c-1.21,1.11-1.81,2.47-1.81,4.07,0,1.1.25,2.01.75,2.74.5.73,1.16,1.32,1.99,1.75.83.44,1.74.76,2.74.95.37.07.84.16,1.42.26.58.1,1.06.17,1.42.22,1,.12,1.69.32,2.08.58.39.27.58.63.58,1.1,0,.56-.27,1.04-.82,1.42-.55.39-1.35.58-2.39.58s-1.84-.23-2.54-.69c-.69-.46-1.13-1.07-1.3-1.83h-4.86c.19,1.88,1.07,3.37,2.61,4.49,1.55,1.12,3.51,1.68,5.9,1.68,1.68,0,3.1-.26,4.26-.77,1.16-.51,2.04-1.22,2.65-2.14.61-.91.91-1.97.91-3.16,0-.93-.16-1.7-.49-2.34-.33-.63-.77-1.14-1.32-1.52Z"/><path d="M194.44,46.27h-4.75v4.86h-3.11v3.98h3.11v8.55c0,1.53.21,2.71.62,3.53.41.82,1.04,1.36,1.88,1.64.84.28,1.87.42,3.09.42h3.62v-4.06h-2.19c-.58,0-1.05-.05-1.39-.15-.34-.1-.57-.3-.69-.6-.12-.3-.18-.76-.18-1.37v-7.96h4.57v-3.98h-4.57v-4.86Z"/><rect x="200.98" y="43.53" width="4.6" height="4.6"/><rect x="200.87" y="51.13" width="4.75" height="18.12"/><path d="M215.16,46.27h-4.75v4.86h-3.11v3.98h3.11v8.55c0,1.53.21,2.71.62,3.53.41.82,1.04,1.36,1.88,1.64.84.28,1.87.42,3.09.42h3.62v-4.06h-2.19c-.58,0-1.05-.05-1.39-.15-.34-.1-.57-.3-.69-.6-.12-.3-.18-.76-.18-1.37v-7.96h4.57v-3.98h-4.57v-4.86Z"/><path d="M233.53,60.48c0,1.63-.35,2.9-1.06,3.82-.71.91-1.71,1.37-3,1.37-1.15,0-2.02-.41-2.61-1.22-.6-.82-.9-2-.9-3.56v-9.75h-4.75v10.19c0,2.73.6,4.8,1.81,6.23,1.21,1.42,2.84,2.14,4.91,2.14,1.34,0,2.47-.28,3.4-.84.93-.56,1.66-1.32,2.19-2.27v2.67h4.75v-18.12h-4.75v9.35Z"/><path d="M247.78,46.27h-4.75v4.86h-3.11v3.98h3.11v8.55c0,1.53.21,2.71.62,3.53.41.82,1.04,1.36,1.88,1.64.84.28,1.87.42,3.09.42h3.62v-4.06h-2.19c-.58,0-1.05-.05-1.39-.15-.34-.1-.57-.3-.69-.6-.12-.3-.18-.76-.18-1.37v-7.96h4.57v-3.98h-4.57v-4.86Z"/><path d="M270.19,55.03c-.77-1.34-1.83-2.4-3.2-3.18-1.36-.78-2.95-1.17-4.75-1.17s-3.52.41-4.93,1.22c-1.41.82-2.52,1.95-3.31,3.42-.79,1.46-1.19,3.13-1.19,5.01s.4,3.48,1.21,4.88c.8,1.4,1.91,2.5,3.32,3.29,1.41.79,3.04,1.19,4.9,1.19,1.46,0,2.78-.27,3.95-.8,1.17-.54,2.15-1.27,2.94-2.21.79-.94,1.36-1.98,1.7-3.12h-4.82c-.34.68-.83,1.23-1.46,1.64-.63.41-1.41.62-2.34.62s-1.71-.2-2.41-.6c-.71-.4-1.27-.98-1.68-1.74-.34-.62-.54-1.35-.59-2.16h13.75c.05-.32.07-.62.07-.91v-.8c0-1.7-.38-3.23-1.15-4.57ZM257.62,58.4c.1-.59.27-1.11.52-1.55.43-.77,1-1.35,1.74-1.74.73-.39,1.53-.58,2.41-.58,1.17,0,2.16.35,2.96,1.06.8.71,1.24,1.64,1.32,2.81h-8.94Z"/></g><g><path d="M156.23,84.15c-1.46-.8-3.11-1.21-4.93-1.21s-3.44.4-4.91,1.21c-1.47.8-2.64,1.92-3.49,3.34-.85,1.42-1.28,3.08-1.28,4.95s.43,3.5,1.28,4.93c.85,1.44,2.01,2.56,3.47,3.36,1.46.8,3.11,1.21,4.93,1.21s3.47-.4,4.93-1.21c1.46-.8,2.62-1.92,3.47-3.36.85-1.44,1.28-3.08,1.28-4.93s-.43-3.53-1.28-4.95c-.85-1.42-2.01-2.54-3.47-3.34ZM155.44,95.44c-.43.8-1,1.41-1.74,1.81-.73.4-1.53.6-2.41.6s-1.68-.2-2.41-.6c-.73-.4-1.31-1-1.74-1.81-.43-.8-.64-1.8-.64-3s.22-2.19.66-3c.44-.8,1.02-1.41,1.75-1.81.73-.4,1.52-.6,2.37-.6s1.67.2,2.39.6c.72.4,1.3,1,1.74,1.81.44.8.66,1.8.66,3s-.21,2.19-.64,3Z"/><path d="M167.13,75.6c-.89.27-1.53.82-1.92,1.66-.39.84-.58,2.1-.58,3.78v2.34h-2.48v3.98h2.48v14.14h4.75v-14.14h3.51v-3.98h-3.51v-2.05c0-.85.15-1.41.44-1.68.29-.27.88-.4,1.75-.4h1.32v-4.06h-2.23c-1.46,0-2.64.13-3.53.4Z"/><polygon points="200.94 95.31 192.8 75.93 187.1 75.93 187.1 101.5 191.85 101.5 191.85 84.63 198.97 101.5 202.77 101.5 209.86 84.65 209.86 101.5 214.61 101.5 214.61 75.93 208.95 75.93 200.94 95.31"/><path d="M229.92,92.74c0,1.63-.35,2.9-1.06,3.82-.71.91-1.71,1.37-3,1.37-1.15,0-2.02-.41-2.61-1.22-.6-.82-.9-2-.9-3.56v-9.75h-4.75v10.19c0,2.73.6,4.8,1.81,6.23,1.21,1.42,2.84,2.14,4.91,2.14,1.34,0,2.47-.28,3.4-.84.93-.56,1.66-1.32,2.19-2.27v2.67h4.75v-18.12h-4.75v9.35Z"/><path d="M251.23,92.02c-.55-.38-1.16-.68-1.84-.9-.68-.22-1.38-.38-2.08-.48-.24-.05-.57-.1-.99-.16-.41-.06-.81-.12-1.19-.18-.38-.06-.69-.1-.93-.13-1.61-.29-2.41-.88-2.41-1.75,0-.51.26-.94.77-1.3.51-.35,1.24-.53,2.19-.53.8,0,1.52.18,2.14.55.62.37.97.91,1.04,1.64h4.6c-.17-1.85-.94-3.29-2.3-4.31-1.36-1.02-3.2-1.53-5.52-1.53s-4.07.55-5.28,1.66c-1.21,1.11-1.81,2.47-1.81,4.07,0,1.1.25,2.01.75,2.74.5.73,1.16,1.32,1.99,1.75.83.44,1.74.76,2.74.95.37.07.84.16,1.42.26.58.1,1.06.17,1.42.22,1,.12,1.69.32,2.08.58.39.27.58.63.58,1.1,0,.56-.27,1.04-.82,1.42-.55.39-1.35.58-2.39.58s-1.84-.23-2.54-.69c-.69-.46-1.13-1.07-1.3-1.83h-4.86c.19,1.88,1.07,3.37,2.61,4.49,1.55,1.12,3.51,1.68,5.9,1.68,1.68,0,3.1-.26,4.26-.77,1.16-.51,2.04-1.22,2.65-2.14.61-.91.91-1.97.91-3.16,0-.93-.16-1.7-.49-2.34-.33-.63-.77-1.14-1.32-1.52Z"/><rect x="255.71" y="83.38" width="4.75" height="18.12"/><rect x="255.82" y="75.79" width="4.6" height="4.6"/><path d="M274.7,97.18c-.71.47-1.55.71-2.52.71-.83,0-1.6-.21-2.3-.64-.71-.43-1.27-1.05-1.68-1.88-.41-.83-.62-1.8-.62-2.92s.21-2.12.62-2.92c.41-.8.97-1.42,1.68-1.86.71-.44,1.47-.66,2.3-.66.97,0,1.81.25,2.52.75.71.5,1.17,1.16,1.39,1.99h5.01c-.44-2.12-1.45-3.78-3.03-4.99-1.58-1.21-3.53-1.81-5.85-1.81-1.85,0-3.49.41-4.91,1.22-1.42.82-2.55,1.94-3.36,3.36-.82,1.42-1.22,3.06-1.22,4.91s.41,3.49,1.22,4.91c.82,1.42,1.94,2.55,3.36,3.36,1.42.82,3.06,1.22,4.91,1.22,2.31,0,4.27-.62,5.86-1.86,1.59-1.24,2.6-2.89,3.01-4.93h-5.01c-.22.88-.68,1.55-1.39,2.03Z"/></g></svg><b class="stat__num">BA <small>(Hons)</small></b><span class="stat__label">Electronic music production</span></li>
+        <li class="stat"><svg class="stat__logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg><b class="stat__num">500+</b><span class="stat__label">Clients</span></li>
+        <li class="stat"><svg class="stat__logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg><b class="stat__num">956</b><span class="stat__label">Instagram followers</span><a class="stat__link" href="https://www.instagram.com/prodbytom_?psln=eHZ6NXA1NjNxankx&amp;utm_source=qr" target="_blank" rel="noopener" aria-label="Instagram profile (opens in a new tab)"></a></li>
+        <li class="stat"><svg class="stat__logo" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.370 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg><b class="stat__num">100+</b><span class="stat__label">LinkedIn connections</span><a class="stat__link" href="https://www.linkedin.com/in/tommaflin" target="_blank" rel="noopener" aria-label="LinkedIn profile (opens in a new tab)"></a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS — structure modelled on the reference section: eyebrow, heading, bordered cards
+       (five stars, quote, then name and role). Cards sit two per row, so add or remove them in pairs. -->
+  <section class="section testimonials" id="testimonials" style="--h:1">
+    <div class="wrap">
+      <div class="head">
+        <h2>My testimonials</h2>
+      </div>
+      <div class="quotes">
+        <figure class="card quote">
+          <div class="stars" role="img" aria-label="5 out of 5 stars"><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg></div>
+          <blockquote>“Working with Tom is a blessing as an artist, as he knows how to adapt to your music and give pointers on how to tweak and advance your sound to the next level! I have had multiple sessions in the studio with Tom and it has opened my eyes to different possibilities and routes I could take in my music career, also making different genres that I had not thought of making before.<br>I would definitely recommend ProdbyTom to any artist that is looking to level up or advance in their music career.”</blockquote>
+          <figcaption class="quote__who"><b>Kingsly</b><span>Artist</span></figcaption>
+        </figure>
+        <figure class="card quote">
+          <div class="stars" role="img" aria-label="5 out of 5 stars"><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg></div>
+          <blockquote>“I’ve been working with ProdbyTom for over a decade. Watching his growth into a professional, high-standard producer has been nothing short of inspiring. His acute attention to detail and high quality standards push me as an artist to always reach higher and do better. Tom finely balances these standards with an innate ability to find fun in the process and keep the sessions light-hearted.<br>A decade of co-producing and writing music together has shown me how important people like Tom are to the music industry. An immense producer and a truly humble human being.”</blockquote>
+          <figcaption class="quote__who"><b>Bookz</b><span>Artist</span></figcaption>
+        </figure>
+        <figure class="card quote">
+          <div class="stars" role="img" aria-label="5 out of 5 stars"><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg></div>
+          <blockquote>“Tom was a great student with excellent technical and creative ability with a professional attention to detail.<br>His music was of a commercial release standard which made for great examples for other students.”</blockquote>
+          <figcaption class="quote__who"><b>Kris Burton</b><span>Electronic music production lecturer, dBs Institute of music, Bristol</span></figcaption>
+        </figure>
+        <figure class="card quote">
+          <div class="stars" role="img" aria-label="5 out of 5 stars"><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg><svg viewBox="0 0 24 24"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/></svg></div>
+          <blockquote>“Working with Tom was a great experience, especially as it was our first time recording in a studio. He made us feel comfortable throughout the sessions, was patient and helpful, and guided us through the recording process. We really enjoyed working with him and were happy with what we created together.”</blockquote>
+          <figcaption class="quote__who"><b>Independent recording artist</b></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Floating mini player (filled in by the script below) -->
+<div class="mini" id="mini" role="region" aria-label="Now playing" inert>
+  <button class="play" type="button" aria-label="Pause">
+    <svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+    <svg class="i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>
+  </button>
+  <button class="mini__title" type="button" aria-label="Back to the player"><small>Now playing</small><b></b></button>
+  <div class="mvol"><button class="mvol__btn" type="button" aria-label="Volume" aria-expanded="false"><svg class="i-vol" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><svg class="i-muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg></button></div>
+  <button class="mini__close" type="button" aria-label="Stop and close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></button>
+  <div class="mini__seek"><span class="mini__t">0:00</span><div class="mini__track" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i></i></div><span class="mini__d">--:--</span></div>
+</div>
+
+<!-- CLOSE + FOOTER -->
+<footer class="closing" id="contact" style="--h:1">
+  <div class="wrap">
+    <div class="directory">
+      <a class="brand brand--foot" href="#top" aria-label="ProdbyTom, back to top">
+        <svg class="fglobe" viewBox="2.5 2.5 59 59" aria-hidden="true">
+          <defs><clipPath id="fglobe-clip"><circle cx="32" cy="32" r="28"/></clipPath></defs>
+          <g fill="none" stroke="#EB3A3A" stroke-width="2">
+            <g clip-path="url(#fglobe-clip)"><path d="M0 32H64M0 21H64M0 43H64M0 12H64M0 52H64"/><path class="fglobe__m" d="M32 4V60"/></g>
+            <circle cx="32" cy="32" r="28.5"/>
+          </g>
+        </svg>
+        <img src="logo.svg" alt="" width="464" height="42">
+      </a>
+      <div class="legal"><span>© <span id="year">2026</span> ProdbyTom</span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // Rotating hero headline: Music production → Recording → Sound design → back to the start
+  const words = [...document.querySelectorAll('.rotator__word')];
+  const rot = document.querySelector('.rotator'), by = document.querySelector('.rotator__by');
+  let i = 0;
+  // Size the line to the active word, then slide "by Tom" from where it was to its new place (across lines too)
+  const fit = animate => {
+    const from = by.getBoundingClientRect();
+    rot.style.width = words[i].getBoundingClientRect().width + 'px';
+    if (!animate) return;
+    const to = by.getBoundingClientRect();
+    by.style.transition = 'none';
+    by.style.transform = `translate(${from.left - to.left}px, ${from.top - to.top}px)`;
+    by.offsetWidth;
+    by.style.transition = ''; by.style.transform = '';
+  };
+  fit(false);
+  document.fonts && document.fonts.ready.then(() => fit(false));
+  addEventListener('resize', () => fit(false));
+  if (words.length > 1) {
+    let timer = null;
+    const step = () => {
+      const out = words[i]; i = (i + 1) % words.length; const next = words[i];
+      fit(true);
+      out.classList.remove('is-active'); out.classList.add('is-leaving');
+      next.classList.remove('is-leaving'); next.classList.add('is-active');
+      setTimeout(() => out.classList.remove('is-leaving'), 850);   // park it below, ready to rise in again
+    };
+    const start = () => { if (!timer) timer = setInterval(step, 2800); };
+    const stop  = () => { clearInterval(timer); timer = null; };
+    document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+    start();
+  }
+
+  // About: Read more opens and closes the longer bio
+  const moreBtn = document.querySelector('.more__btn'), moreBody = document.getElementById('about-more');
+  if (moreBtn) moreBtn.addEventListener('click', () => {
+    const open = moreBtn.getAttribute('aria-expanded') !== 'true';
+    moreBtn.setAttribute('aria-expanded', open);
+    moreBtn.querySelector('.more__label').textContent = open ? 'Read less' : 'Read more';
+    moreBody.classList.toggle('open', open);
+    moreBody.inert = !open;
+  });
+
+  // Contact pop-up: header button toggles it; outside click, Escape or picking a link closes it
+  const pop = document.getElementById('contact-pop');
+  let popFrom = null;   // the button that opened it
+  const place = () => {
+    const vw = document.documentElement.clientWidth;
+    pop.style.removeProperty('--pop-top'); pop.style.removeProperty('--pop-right');
+    if (!popFrom || !popFrom.offsetParent || popFrom.closest('.sheet')) return;   // phone menu: default spot under the header
+    const r = popFrom.getBoundingClientRect();
+    if (popFrom.closest('.nav')) { pop.style.setProperty('--pop-right', (vw - r.right) + 'px'); return; }
+    // Any other button: just below it (or above if there's no room), lined up with one of its edges
+    const h = pop.offsetHeight, w = pop.offsetWidth;
+    const top = (innerHeight - r.bottom > h + 20) ? r.bottom + 10 : Math.max(10, r.top - h - 10);
+    pop.style.setProperty('--pop-top', top + 'px');
+    const right = (r.left + w <= vw - 10) ? vw - r.left - w : vw - r.right;   // left edges match, else right edges match
+    pop.style.setProperty('--pop-right', Math.max(10, right) + 'px');
+  };
+  const setPop = (open, from) => {
+    if (open) { popFrom = from; place(); }
+    pop.classList.toggle('open', open);
+    document.querySelectorAll('button[data-contact-open]').forEach(b => b.setAttribute('aria-expanded', open && b === popFrom));
+    if (open) setTimeout(() => pop.querySelector('a').focus({preventScroll:true}), 50);
+  };
+  document.addEventListener('click', e => {
+    const opener = e.target.closest('[data-contact-open]');
+    if (opener) { e.preventDefault(); setPop(!(pop.classList.contains('open') && popFrom === opener), opener); return; }
+    if (pop.classList.contains('open') && (!pop.contains(e.target) || e.target.closest('.pop__link'))) setPop(false);
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && pop.classList.contains('open')) { const f = popFrom; setPop(false); if (f && f.offsetParent) f.focus(); }
+  });
+  // A pop-up opened from a button in the page closes when the page scrolls away from it
+  addEventListener('scroll', () => { if (pop.classList.contains('open') && popFrom && !popFrom.closest('.nav, .sheet')) setPop(false); }, {passive:true});
+  addEventListener('resize', () => { if (pop.classList.contains('open')) place(); });
+
+  // Work tabs: Recent tracks / Sync media
+  const tabs = [...document.querySelectorAll('.tab')];
+  const select = tab => {
+    tabs.forEach(t => {
+      const on = t === tab;
+      t.setAttribute('aria-selected', on); t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+    });
+    // a playing video keeps going when you switch tabs; the floating mini player takes over its controls
+  };
+  tabs.forEach((t, i) => {
+    t.addEventListener('click', () => select(t));
+    t.addEventListener('keydown', e => {
+      const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (d) { const n = tabs[(i + d + tabs.length) % tabs.length]; select(n); n.focus(); e.preventDefault(); }
+    });
+  });
+
+  // Sync media videos (WebM): load and play on click. If the file is missing or this browser can't play WebM
+  // (older iPhones), show a "Watch on YouTube" link from data-youtube; with no link set, show the expected filename.
+  document.querySelectorAll('.video').forEach(card => {
+    const v = card.querySelector('video'), btn = card.querySelector('.video__play'), note = card.querySelector('.video__note');
+    const fail = () => {
+      card.classList.remove('is-playing'); v.controls = false; v.removeAttribute('src');
+      const yt = card.dataset.youtube;
+      if (yt) {
+        card.classList.add('is-fallback');
+        if (!card.querySelector('.video__yt')) {
+          const a = document.createElement('a');
+          a.className = 'btn btn--secondary video__yt'; a.href = yt; a.target = '_blank'; a.rel = 'noopener';
+          a.textContent = 'Watch on YouTube';
+          card.querySelector('.video__frame').append(a);
+        }
+      } else { card.classList.add('is-missing'); note.textContent = 'No file yet: ' + card.dataset.src; }
+    };
+    btn.addEventListener('click', () => {
+      if (!v.canPlayType('video/webm')) return fail();
+      document.querySelectorAll('.vtrack video').forEach(o => o !== v && o.pause());
+      if (!v.getAttribute('src')) v.src = card.dataset.src;
+      v.controls = true;
+      v.play().then(() => card.classList.add('is-playing')).catch(() => {});
+    });
+    v.addEventListener('error', fail);
+  });
+
+  // Sync media carousel: one video at a time; swipe, scroll, arrows, keys or the list
+  const track = document.querySelector('.vtrack');
+  if (track) {
+    const slides = [...track.children], items = [...document.querySelectorAll('.vlist__item')];
+    const [prev, next] = document.querySelectorAll('.vnav__btn'), count = document.querySelector('.vnav__count b');
+    const chevs = [...document.querySelectorAll('.vchev')];   // the big arrows either side of the video
+    let cur = 0;
+    const go = i => { i = Math.max(0, Math.min(slides.length - 1, i)); track.scrollTo({ left: i * track.clientWidth }); };
+    const mark = i => {
+      if (i !== cur) slides[cur].querySelector('video').pause();
+      cur = i;
+      count.textContent = String(i + 1);
+      items.forEach((b, k) => b.classList.toggle('is-active', k === i));
+      prev.disabled = i === 0; next.disabled = i === slides.length - 1;
+      chevs.forEach(c => { c.disabled = c.dataset.dir === '-1' ? i === 0 : i === slides.length - 1; });
+      slides.forEach((sl, k) => sl.setAttribute('aria-label', `${k + 1} of ${slides.length}`));
+    };
+    let raf = 0;
+    track.addEventListener('scroll', () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => mark(Math.round(track.scrollLeft / track.clientWidth))); });
+    prev.addEventListener('click', () => go(cur - 1));
+    next.addEventListener('click', () => go(cur + 1));
+    chevs.forEach(c => c.addEventListener('click', () => go(cur + +c.dataset.dir)));
+    items.forEach(b => b.addEventListener('click', () => go(+b.dataset.i)));
+    track.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') { go(cur + 1); e.preventDefault(); }
+      if (e.key === 'ArrowLeft')  { go(cur - 1); e.preventDefault(); }
+    });
+    addEventListener('resize', () => track.scrollTo({ left: cur * track.clientWidth, behavior: 'instant' }));
+    mark(0);
+  }
+
+  // Mobile menu
+  const btn = document.querySelector('.menu-btn'), sheet = document.getElementById('sheet');
+  btn.addEventListener('click', () => { const o = sheet.classList.toggle('open'); btn.setAttribute('aria-expanded', o); btn.textContent = o ? 'Close' : 'Menu'; });
+  sheet.addEventListener('click', () => { sheet.classList.remove('open'); btn.setAttribute('aria-expanded', false); btn.textContent = 'Menu'; });
+
+  // Players: one shared <audio>, a seeded waveform per track
+  const audio = new Audio(); audio.preload = 'none';
+  let current = null;
+  const phone = matchMedia('(max-width:639px)');   // phones show the seek bar instead of the waveform
+  const fmt = s => isFinite(s) ? `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}` : '--:--';
+  const rand = seed => () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+  document.querySelectorAll('.player').forEach(p => {
+    const wave = p.querySelector('.wave'), r = rand(+p.dataset.seed || 1);
+    const n = innerWidth < 640 ? 64 : (p.closest('.reel') ? 140 : 90);
+    // Real tracks: data-peaks holds the file's loudness measured at 200 points along it (0-99),
+    // so each bar shows what that part of the track actually sounds like. Placeholders without a file get a made-up shape.
+    const peaks = p.dataset.peaks ? p.dataset.peaks.split(',').map(Number) : null;
+    let prev = .5;
+    for (let i = 0; i < n; i++) {
+      let h;
+      if (peaks) {
+        const a = Math.floor(i * peaks.length / n), b = Math.max(a + 1, Math.floor((i + 1) * peaks.length / n));
+        h = Math.max(...peaks.slice(a, b));   // loudest point in this bar's stretch of the track
+      } else {
+        const env = Math.sin(Math.PI * (i + .5) / n) * .5 + .5;
+        prev = prev * .45 + r() * .55;
+        h = env * prev * 100;
+      }
+      const bar = document.createElement('i');
+      const hp = Math.max(8, Math.round(h));
+      bar.style.height = hp + '%';
+      bar.style.setProperty('--m', (3 / (.44 * hp)).toFixed(3));   // scale at which this bar is a 3px line
+      wave.appendChild(bar);
+    }
+    p._bars = [...wave.children];
+    p._time = p.querySelector('.time');
+    p._reel = !!p.closest('.reel');
+
+    // Read the duration without downloading the whole file
+    const probe = new Audio(); probe.preload = 'metadata'; probe.src = p.dataset.src;
+    probe.addEventListener('loadedmetadata', () => { p._dur = probe.duration; paint(p, 0); });
+
+    p.querySelector('.play').addEventListener('click', () => toggle(p));
+    const seek = frac => { if (current !== p) toggle(p, frac); else if (audio.duration) audio.currentTime = frac * audio.duration; };
+    const fracAt = e => { const b = wave.getBoundingClientRect(); return Math.min(1, Math.max(0, (e.clientX - b.left) / b.width)); };
+    // Drag to scrub (mainly for the phone seek bar): the handle and time follow your finger, and the song jumps there on release.
+    wave.addEventListener('pointerdown', e => {
+      if (e.button) return;
+      p._drag = fracAt(e); wave.setPointerCapture(e.pointerId); wave.classList.add('is-dragging');
+      preview(p, p._drag);
+    });
+    wave.addEventListener('pointermove', e => {
+      if (p._drag == null) return;
+      p._drag = fracAt(e); preview(p, p._drag);
+    });
+    const end = e => {
+      if (p._drag == null) return;
+      const f = p._drag; p._drag = null; wave.classList.remove('is-dragging');
+      if (e.type === 'pointerup') seek(f); else paint(p, current === p ? audio.currentTime : 0);
+    };
+    wave.addEventListener('pointerup', end);
+    wave.addEventListener('pointercancel', end);
+    // (no click handler: a tap is a pointerdown + pointerup, which already seeks)
+    wave.addEventListener('keydown', e => {
+      if (current !== p || !audio.duration) return;
+      if (e.key === 'ArrowRight') { audio.currentTime = Math.min(audio.duration, audio.currentTime + 5); e.preventDefault(); }
+      if (e.key === 'ArrowLeft')  { audio.currentTime = Math.max(0, audio.currentTime - 5); e.preventDefault(); }
+    });
+  });
+
+  // while scrubbing, show where the song will jump to without moving it yet
+  function preview(p, f) {
+    const d = (current === p && audio.duration) || p._dur;
+    p.querySelector('.wave').style.setProperty('--f', f * 100 + '%');
+    if (d) p._time.textContent = p._reel || phone.matches ? `${fmt(f * d)} / ${fmt(d)}` : fmt(f * d);
+  }
+  function paint(p, t) {
+    if (p._drag != null) return;   // the finger is in charge while scrubbing
+    const d = (current === p && audio.duration) || p._dur, f = d ? t / d : 0, on = Math.round(f * p._bars.length);
+    p.querySelector('.wave').style.setProperty('--f', Math.min(1, f) * 100 + '%');
+    p._bars.forEach((b, i) => b.classList.toggle('on', i < on));
+    p.querySelector('.wave').setAttribute('aria-valuenow', Math.round(f * 100));
+    p._time.textContent = p._reel || (current === p && phone.matches) ? `${fmt(t)} / ${fmt(d)}` : (current === p ? fmt(t) : fmt(d));
+  }
+
+  // replaced by the volume code below with a short fade; switching tracks fades the old one out first
+  let fadeOut = (m, done) => done();
+  // "playing" for buttons: a pause fades out for 160ms before the element really pauses, and that tail counts as paused
+  const isOn = m => !m.paused && !m._out;
+  function toggle(p, frac) {
+    if (current === p && frac == null) {
+      if (isOn(audio)) audio.pause(); else audio.play().catch(playFailed(p));
+      return;
+    }
+    if (current && !audio.paused) { const from = current; fadeOut(audio, () => { if (current === from) start(p, frac); }); }
+    else start(p, frac);
+  }
+  function start(p, frac) {
+    const old = current;
+    audio._out = false;   // a pause that was fading out is superseded by the new track
+    current = p; p.classList.add('is-current'); audio.src = p.dataset.src;
+    if (old) { old.classList.remove('is-playing', 'is-current'); paint(old, 0); }   // after the switch, so it shows its length again
+    if (frac != null) audio.addEventListener('loadedmetadata', () => { audio.currentTime = frac * audio.duration; }, { once: true });
+    audio.play().catch(playFailed(p));
+  }
+
+  // A play() that's interrupted (switching tracks fast, AbortError) or blocked by the browser (NotAllowedError) isn't a
+  // missing file; only an unplayable source is. A truly missing file is also caught by the audio 'error' event below.
+  const playFailed = p => e => { if (e && e.name === 'NotSupportedError' && current === p) missing(p); };
+  function missing(p) {
+    p.classList.remove('is-playing');
+    p._time.textContent = p._reel ? 'Add ' + p.dataset.src : 'No file';
+    p._time.title = 'Add ' + p.dataset.src;
+  }
+
+  audio.addEventListener('play',  () => current && current.classList.add('is-playing'));
+  audio.addEventListener('pause', () => current && current.classList.remove('is-playing'));
+  audio.addEventListener('pausing', () => current && current.classList.remove('is-playing'));   // the button answers at once, not after the fade
+  audio.addEventListener('ended', () => { if (current) { current.classList.remove('is-playing', 'is-current'); paint(current, 0); } });
+  audio.addEventListener('timeupdate', () => current && paint(current, audio.currentTime));
+  audio.addEventListener('error', () => current && missing(current));
+
+  // Volume: one level for the showreel, every track and the sync videos, remembered between visits.
+  // The header speaker opens a drop-down slider (always there on desktop); the floating player's speaker opens the
+  // same slider (a plain mute button on phones). Play, pause, track changes and mute fade softly instead of cutting.
+  {
+    const VKEY = 'prodbytom-volume';
+    let vol = 1, muted = false;
+    try { const v = JSON.parse(localStorage.getItem(VKEY)); if (v) { vol = Math.min(1, Math.max(0, +v.v || 0)); muted = !!v.m; } } catch (e) {}
+    const videos = [...document.querySelectorAll('.vtrack video')], media = [audio, ...videos];
+    const touch = matchMedia('(max-width:639px), (pointer:coarse)');
+    const ICONS = '<svg class="i-vol" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z" fill="currentColor"/><path d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg><svg class="i-muted" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" fill="none"/></svg>';
+    const PANEL = '<button class="mute" type="button" aria-label="Mute" aria-pressed="false">' + ICONS + '</button>'
+      + '<div class="vol__line" role="slider" tabindex="0" aria-label="Volume" aria-valuemin="0" aria-valuemax="100"><i></i></div><span class="vol__pct" aria-hidden="true"></span>';
+
+    // ── soft fades: each element's level = slider level × its own fade × the mute fade ──
+    const fadeOf = new Map(media.map(m => [m, 1])), wrote = new Map();
+    let muteF = muted ? 0 : 1;
+    const write = m => {
+      const v = Math.min(1, Math.max(0, vol * fadeOf.get(m) * muteF));
+      wrote.set(m, v);
+      if (m.volume !== v) m.volume = v;
+    };
+    // Fades run on animation frames for smoothness, with a timer as a backstop: browsers stop animation frames in
+    // background tabs (and some embedded views), and the end of a fade is where the real pause / track switch happens,
+    // so it must always arrive on time even when no frames do.
+    const tweens = new Map();
+    const stopTween = key => { const r = tweens.get(key); if (r) { cancelAnimationFrame(r.raf); clearTimeout(r.to); tweens.delete(key); } };
+    const tween = (key, from, to, ms, step, done) => {
+      stopTween(key);
+      const t0 = performance.now(), r = { raf: 0, to: 0 };
+      const finish = () => { if (tweens.get(key) !== r) return; stopTween(key); step(to); done && done(); };
+      const tick = now => {
+        const k = Math.min(1, Math.max(0, (now - t0) / ms)), e = k * (2 - k);   // ease-out (a frame can be stamped just before t0)
+        if (k >= 1) return finish();
+        step(from + (to - from) * e);
+        r.raf = requestAnimationFrame(tick);
+      };
+      tweens.set(key, r);
+      r.raf = requestAnimationFrame(tick);
+      r.to = setTimeout(finish, ms + 40);
+    };
+    const fade = (m, to, ms, done) => tween(m, fadeOf.get(m), to, ms, v => { fadeOf.set(m, v); write(m); }, done);
+    fadeOut = (m, done) => fade(m, 0, 160, done);
+    const P = HTMLMediaElement.prototype;
+    media.forEach(m => {
+      // pause: fade out over 160ms, then really pause (and reset the fade for next time)
+      m.pause = function () {
+        if (this.paused || this._out) return;
+        this._out = true;
+        this.dispatchEvent(new Event('pausing'));   // lets buttons switch to "play" straight away
+        fade(this, 0, 160, () => { if (!this._out) return; this._out = false; P.pause.call(this); fadeOf.set(this, 1); write(this); });
+      };
+      // play: start silent and fade in; playing again mid fade-out just turns it back up
+      m.play = function () {
+        if (this._out && !this.paused) {
+          this._out = false; fade(this, 1, 200);
+          this.dispatchEvent(new Event('play'));     // it never actually stopped, so tell the buttons it's playing again
+          return Promise.resolve();
+        }
+        this._out = false;
+        if (this.paused) { fadeOf.set(this, 0); write(this); }
+        const pr = P.play.call(this);
+        fade(this, 1, 260);
+        return pr;
+      };
+    });
+
+    // ── drop-downs (header + floating player): hover opens on a mouse, a click pins it, Escape / clicking away closes ──
+    const drops = [];
+    const dropdown = (host, btn, panel, onClick) => {
+      let hover = false, pinned = false, t = 0;
+      host.classList.add('vhost');
+      const st = () => {
+        const open = pinned || hover || host._drag;
+        host.classList.toggle('is-open', !!open); btn.setAttribute('aria-expanded', !!open); panel.inert = !open;
+        if (open) hideHint();
+      };
+      const enter = e => { if (e.pointerType !== 'mouse') return; clearTimeout(t); hover = true; st(); };
+      const leave = e => { if (e.pointerType !== 'mouse') return; clearTimeout(t); t = setTimeout(() => { hover = false; st(); }, 180); };
+      [btn, panel].forEach(el => { el.addEventListener('pointerenter', enter); el.addEventListener('pointerleave', leave); });
+      btn.addEventListener('click', () => {
+        if (onClick && onClick()) return;
+        pinned = !pinned; if (!pinned) hover = false; st();
+        if (pinned) setTimeout(() => panel.querySelector('.vol__line').focus({ preventScroll: true }), 30);
+      });
+      document.addEventListener('pointerdown', e => { if (pinned && !host.contains(e.target) && !panel.contains(e.target)) { pinned = false; st(); } });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape' && host.classList.contains('is-open')) { pinned = hover = false; st(); btn.focus(); } });
+      const d = { st, close: () => { pinned = hover = false; st(); } };
+      host._dd = d; drops.push(d); panel.inert = true;
+      return d;
+    };
+
+    // header speaker button + drop-down, placed just before "Contact me"
+    const nv = document.createElement('div');
+    nv.className = 'nvol';
+    nv.innerHTML = '<button class="nvol__btn" type="button" aria-label="Volume" aria-expanded="false" aria-controls="vol-drop">' + ICONS + '</button>'
+      + '<div class="vol" id="vol-drop">' + PANEL + '</div>';
+    const navWrap = document.querySelector('.nav .wrap');
+    navWrap.insertBefore(nv, navWrap.querySelector('.contact-btn'));
+    const nBtn = nv.querySelector('.nvol__btn');
+
+    // First play ever: a one-off note under the speaker saying the volume lives there.
+    // Goes away on its ×, when the volume is opened, or after 8 seconds; never shows again on this browser.
+    const HKEY = 'prodbytom-volume-hint';
+    let hintSeen = false;
+    try { hintSeen = localStorage.getItem(HKEY) === '1'; } catch (e) {}
+    const hint = document.createElement('div');
+    hint.className = 'vhint'; hint.setAttribute('role', 'status'); hint.inert = true;
+    hint.innerHTML = '<p><b>Volume is up here</b>Use the speaker to turn it up, down or off.</p>'
+      + '<button class="vhint__x" type="button" aria-label="Dismiss"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg></button>';
+    navWrap.appendChild(hint);
+    let hintTimer = 0;
+    const placeHint = () => {
+      const w = navWrap.getBoundingClientRect(), b = nBtn.getBoundingClientRect();
+      // right edge lined up with "Contact me"'s, arrow under the speaker's centre
+      hint.style.right = '0px';
+      hint.style.setProperty('--arrow', (w.right - (b.left + b.width / 2) - 6) + 'px');
+    };
+    function hideHint() {
+      clearTimeout(hintTimer);
+      hint.classList.remove('is-on'); hint.inert = true; nv.classList.remove('is-hinted');
+    }
+    const showHint = () => {
+      if (hintSeen || !nBtn.offsetParent) return;   // already shown once, or no speaker on this screen (phones, touch)
+      hintSeen = true;
+      try { localStorage.setItem(HKEY, '1'); } catch (e) {}
+      placeHint(); hint.classList.add('is-on'); hint.inert = false; nv.classList.add('is-hinted');
+      hintTimer = setTimeout(hideHint, 8000);
+    };
+    hint.querySelector('.vhint__x').addEventListener('click', hideHint);
+    hint.addEventListener('pointerenter', () => clearTimeout(hintTimer));
+    hint.addEventListener('pointerleave', () => { if (hint.classList.contains('is-on')) hintTimer = setTimeout(hideHint, 3000); });
+    addEventListener('resize', () => { if (hint.classList.contains('is-on')) placeHint(); });
+    audio.addEventListener('play', showHint);
+    videos.forEach(v => v.addEventListener('play', showHint));
+
+    dropdown(nv, nBtn, nv.querySelector('.vol'));
+
+    // floating player: same drop-down from its speaker; on phones / touch screens the speaker just mutes
+    const mv = document.querySelector('.mini .mvol');
+    if (mv) {
+      const mBtn = mv.querySelector('.mvol__btn'), mPanel = document.createElement('div');
+      mPanel.className = 'vol'; mPanel.innerHTML = PANEL; mv.appendChild(mPanel);
+      dropdown(mv, mBtn, mPanel, () => { if (!touch.matches) return false; toggleMute(); return true; });
+    }
+
+    // ── state ──
+    const waves = [...document.querySelectorAll('.wave')];
+    let lastVs = -1;
+    const apply = () => {
+      const silent = muted || vol === 0, pct = Math.round(vol * 100);
+      media.forEach(write);
+      document.documentElement.classList.toggle('vol-muted', silent);
+      // every waveform: full height at 100%, shrinking smoothly with the level down to a flat line at 0 / muted.
+      // Square-root curve so quiet levels still show a shape. Set on the waveforms only, so the page doesn't restyle.
+      const vs = silent ? 0 : Math.sqrt(vol);
+      if (vs !== lastVs) { lastVs = vs; waves.forEach(w => w.style.setProperty('--vs', vs.toFixed(3))); }
+      document.querySelectorAll('.vol__line').forEach(r => {
+        r.style.setProperty('--f', vol * 100 + '%');
+        r.setAttribute('aria-valuenow', pct); r.setAttribute('aria-valuetext', silent ? 'Muted' : pct + '%');
+      });
+      document.querySelectorAll('.vol__pct').forEach(e => { e.textContent = silent ? 'Muted' : pct + '%'; });
+      document.querySelectorAll('.mute').forEach(b => { b.setAttribute('aria-pressed', silent); b.setAttribute('aria-label', silent ? 'Unmute' : 'Mute'); });
+      document.querySelectorAll('.mvol__btn').forEach(b => b.setAttribute('aria-label', touch.matches ? (silent ? 'Unmute' : 'Mute') : 'Volume'));
+      try { localStorage.setItem(VKEY, JSON.stringify({ v: vol, m: muted })); } catch (e) {}
+    };
+    // mute fades out (then really mutes); unmute fades back in
+    const setMuted = on => {
+      muted = on;
+      if (on) tween('mute', muteF, 0, 200, v => { muteF = v; media.forEach(write); }, () => media.forEach(m => { if (!m.muted) m.muted = true; }));
+      else { media.forEach(m => { if (m.muted) m.muted = false; }); tween('mute', muteF, 1, 260, v => { muteF = v; media.forEach(write); }); }
+      apply();
+    };
+    function toggleMute() { if (muted || vol === 0) { if (vol === 0) vol = .5; setMuted(false); } else setMuted(true); }
+    const set = v => { vol = Math.min(1, Math.max(0, v)); if (vol > 0 && muted) setMuted(false); else apply(); };
+    document.addEventListener('click', e => { if (e.target.closest('.mute')) toggleMute(); });
+    document.querySelectorAll('.vol__line').forEach(r => {
+      const host = r.closest('.vhost');
+      const frac = e => { const b = r.getBoundingClientRect(); return (e.clientX - b.left) / b.width; };
+      r.addEventListener('pointerdown', e => { host._drag = true; r.setPointerCapture(e.pointerId); r.classList.add('is-drag'); set(frac(e)); host._dd.st(); });
+      r.addEventListener('pointermove', e => { if (host._drag) set(frac(e)); });
+      const end = () => { host._drag = false; r.classList.remove('is-drag'); host._dd.st(); };
+      r.addEventListener('pointerup', end); r.addEventListener('pointercancel', end);
+      r.addEventListener('keydown', e => {
+        const to = { ArrowRight: vol + .1, ArrowUp: vol + .1, ArrowLeft: vol - .1, ArrowDown: vol - .1, Home: 0, End: 1 }[e.key];
+        if (to == null) return; e.preventDefault(); set(Math.round(to * 10) / 10);
+      });
+    });
+    // a video's own volume control updates the shared level too (our own fades are ignored here)
+    videos.forEach(v => v.addEventListener('volumechange', () => {
+      const ours = Math.abs(v.volume - (wrote.get(v) ?? -1)) < .002;
+      if (!ours && Math.abs(v.volume - vol) > .002) { vol = v.volume; fadeOf.set(v, 1); apply(); }
+      const tweening = tweens.has('mute');
+      if (!tweening && v.muted !== muted) { muted = v.muted; muteF = muted ? 0 : 1; media.forEach(m => { m.muted = muted; }); apply(); }
+    }));
+    media.forEach(m => { m.muted = muted; });
+    apply();
+  }
+
+  // Floating mini player: tracks whatever is playing (showreel, a track or a sync video) and
+  // slides in only while that item's own play button / video frame is out of view.
+  const mini = document.getElementById('mini');
+  if (mini && 'IntersectionObserver' in window) {
+    const mBtn = mini.querySelector('.play'), mName = mini.querySelector('.mini__title b');
+    const mTrack = mini.querySelector('.mini__track'), mT = mini.querySelector('.mini__t'), mD = mini.querySelector('.mini__d');
+    // miniPaused: paused from the floating player itself, so keep it up to allow resuming.
+    // Paused anywhere else, it stays hidden until something plays again.
+    let act = null, inView = true, drag = null, miniPaused = false;
+    const show = (t, d) => { const f = d ? Math.min(1, Math.max(0, t / d)) : 0; mTrack.style.setProperty('--f', f * 100 + '%'); mTrack.setAttribute('aria-valuenow', Math.round(f * 100)); mTrack.setAttribute('aria-valuetext', fmt(t) + ' of ' + fmt(d)); mT.textContent = fmt(d ? t : 0); mD.textContent = fmt(d); };
+    const io = new IntersectionObserver(es => es.forEach(e => { if (act && e.target === act.anchor) { inView = e.isIntersecting; if (inView) miniPaused = false; sync(); } }));
+    const sync = () => {
+      const on = !!act && !inView && (!act.media.paused || miniPaused);
+      mini.classList.toggle('is-on', on); mini.inert = !on;
+      const playing = !!act && isOn(act.media);
+      mini.classList.toggle('is-playing', playing);
+      mBtn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+      if (act && drag == null) show(act.media.currentTime, act.media.duration);
+      // browser tab: "ProdbyTom", or "Playing - <title>" while something is playing
+      const tab = playing && act.name ? 'Playing - ' + act.name : 'ProdbyTom';
+      if (document.title !== tab) document.title = tab;
+    };
+    const use = (media, anchor, title) => {
+      if (!media.paused) miniPaused = false;
+      if (!act || act.anchor !== anchor) {
+        if (act) io.unobserve(act.anchor);
+        act = { media, anchor, name: title ? title.textContent.replace(/\s+/g, ' ').trim() : '' }; inView = true; io.observe(anchor);
+        // copy the title's own markup so a smaller credit (e.g. "with Prod.Bingoo") keeps its styling
+        mName.replaceChildren(...(title ? [...title.childNodes].map(n => n.cloneNode(true)) : []));
+      }
+      sync();
+    };
+    const clear = () => { if (act) io.unobserve(act.anchor); act = null; sync(); };
+    const nameOf = el => el;
+
+    // only one thing plays at a time
+    audio.addEventListener('play', () => document.querySelectorAll('.vtrack video').forEach(v => v.pause()));
+    document.querySelectorAll('.vtrack video').forEach(v => v.addEventListener('play', () => audio.pause()));
+    audio.addEventListener('play', () => current && use(audio, current.querySelector('.play'), nameOf(current.querySelector('.track__title b, .reel__name b'))));
+    document.querySelectorAll('.video').forEach(card => {
+      const v = card.querySelector('video');
+      v.addEventListener('play', () => use(v, card.querySelector('.video__frame'), nameOf(card.querySelector('.video__meta b'))));
+    });
+    // the shared <audio> isn't in the DOM, so listen on it directly as well as on the page (for the videos)
+    ['pause', 'pausing', 'timeupdate'].forEach(t => {
+      document.addEventListener(t, e => { if (act && e.target === act.media) sync(); }, true);
+      audio.addEventListener(t, () => { if (act && act.media === audio) sync(); });
+    });
+    document.addEventListener('ended', e => { if (act && e.target === act.media) clear(); }, true);
+    audio.addEventListener('ended', () => { if (act && act.media === audio) clear(); });
+
+    mBtn.addEventListener('click', () => {
+      if (!act) return;
+      if (!isOn(act.media)) { miniPaused = false; act.media.play().catch(() => {}); } else { miniPaused = true; act.media.pause(); }
+    });
+    // Seek: click or drag the bar, or use arrow keys / Home / End when it has focus
+    const fracAt = e => { const b = mTrack.getBoundingClientRect(); return Math.min(1, Math.max(0, (e.clientX - b.left) / b.width)); };
+    mTrack.addEventListener('pointerdown', e => {
+      if (!act || !act.media.duration) return;
+      drag = fracAt(e); mTrack.setPointerCapture(e.pointerId); mTrack.classList.add('is-drag');
+      show(drag * act.media.duration, act.media.duration);
+    });
+    mTrack.addEventListener('pointermove', e => { if (drag == null || !act) return; drag = fracAt(e); show(drag * act.media.duration, act.media.duration); });
+    const endDrag = () => {
+      if (drag == null) return;
+      if (act && act.media.duration) act.media.currentTime = drag * act.media.duration;
+      drag = null; mTrack.classList.remove('is-drag'); sync();
+    };
+    mTrack.addEventListener('pointerup', endDrag);
+    mTrack.addEventListener('pointercancel', endDrag);
+    mTrack.addEventListener('keydown', e => {
+      if (!act || !act.media.duration) return;
+      const m = act.media, d = m.duration;
+      const to = { ArrowRight: m.currentTime + 5, ArrowUp: m.currentTime + 5, ArrowLeft: m.currentTime - 5, ArrowDown: m.currentTime - 5, Home: 0, End: d - .1 }[e.key];
+      if (to == null) return;
+      e.preventDefault(); m.currentTime = Math.min(d, Math.max(0, to)); sync();
+    });
+    mini.querySelector('.mini__close').addEventListener('click', () => { if (act) act.media.pause(); clear(); });
+    mini.querySelector('.mini__title').addEventListener('click', () => {
+      if (!act) return;
+      const panel = act.anchor.closest('[role="tabpanel"]');
+      if (panel && panel.hidden) document.querySelector(`[aria-controls="${panel.id}"]`)?.click();
+      act.anchor.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
+    });
+  }
+})();
+</script>
+<script>
+// Spinning favicon: redraws the red wire globe 16 times per turn, sliding its meridians round so it looks like it's rotating.
+// favicon.svg stays as the still version (used before this runs, and when the visitor prefers reduced motion).
+(() => {
+  const icon = document.querySelector('link[rel="icon"]');
+  if (!icon || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const R = 28, STEP = 22.5, FRAMES = 16, MS = 150;   // 22.5° between meridians, one step every 2.4s
+  const frame = phase => {
+    let m = '';
+    for (let k = -4; k <= 4; k++) {
+      const lon = phase + k * STEP;
+      if (Math.abs(lon) >= 90) continue;                        // only the meridians on the side facing us
+      const rx = R * Math.abs(Math.sin(lon * Math.PI / 180));
+      m += rx < .3 ? 'M32 4V60' : `M32 4A${rx.toFixed(2)} ${R} 0 0 ${lon > 0 ? 1 : 0} 32 60`;
+    }
+    return 'data:image/svg+xml,' + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><clipPath id="g"><circle cx="32" cy="32" r="28"/></clipPath></defs>'
+      + '<g fill="none" stroke="#EB3A3A" stroke-width="2"><g clip-path="url(#g)"><path d="M0 32H64M0 21H64M0 43H64M0 12H64M0 52H64' + m + '"/></g>'
+      + '<circle cx="32" cy="32" r="28.5"/></g></svg>');
+  };
+  const frames = Array.from({ length: FRAMES }, (_, i) => frame(i * STEP / FRAMES));
+  let i = 0;
+  const tick = () => { icon.href = frames[i = (i + 1) % FRAMES]; };
+  // Browsers slow page timers to once a second in background tabs, which is exactly when the tab icon is on show,
+  // so the beat comes from a tiny worker, whose timers keep running.
+  try {
+    const w = new Worker(URL.createObjectURL(new Blob([`setInterval(() => postMessage(0), ${MS})`], { type: 'text/javascript' })));
+    w.onmessage = tick;
+  } catch (e) { setInterval(tick, MS); }
+})();
+</script>
+<script>
+// Footer globe: the same wire globe as the tab icon, turning smoothly (redrawn every animation frame while it's on screen).
+(() => {
+  const m = document.querySelector('.fglobe__m');
+  if (!m) return;
+  const R = 28, STEP = 22.5, SPEED = STEP / 2400;   // same pace as the tab icon: one meridian's width every 2.4s
+  const draw = phase => {
+    let d = '';
+    for (let k = -4; k <= 4; k++) {
+      const lon = phase + k * STEP;
+      if (Math.abs(lon) >= 90) continue;            // only the meridians on the side facing us
+      const rx = R * Math.abs(Math.sin(lon * Math.PI / 180));
+      d += rx < .3 ? 'M32 4V60' : `M32 4A${rx.toFixed(2)} ${R} 0 0 ${lon > 0 ? 1 : 0} 32 60`;
+    }
+    m.setAttribute('d', d);
+  };
+  draw(0);
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  let raf = 0, t0 = 0, from = 0, phase = 0;
+  const loop = now => { phase = (from + (now - t0) * SPEED) % STEP; draw(phase); raf = requestAnimationFrame(loop); };
+  new IntersectionObserver(([e]) => {
+    cancelAnimationFrame(raf);
+    if (e.isIntersecting) { from = phase; raf = requestAnimationFrame(now => { t0 = now; loop(now); }); }
+  }).observe(m.closest('svg'));
+})();
+</script>
+</body>
+</html>
